@@ -19,14 +19,15 @@ const DAY = 24 * HOUR
 const TICK_MS = 3000
 
 /* --- small numeric helpers --------------------------------------- */
-const clamp = (n: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, n))
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value))
 const rand = (min: number, max: number) => min + Math.random() * (max - min)
-const chance = (p: number) => Math.random() < p
-const pick = <T>(xs: T[]): T => xs[Math.floor(Math.random() * xs.length)]
+const chance = (probability: number) => Math.random() < probability
+const pickRandom = <Item,>(items: Item[]): Item =>
+  items[Math.floor(Math.random() * items.length)]
 /** Nudge a value within bounds by up to ±step. */
-const wander = (v: number, min: number, max: number, step: number) =>
-  clamp(v + rand(-step, step), min, max)
+const wander = (value: number, min: number, max: number, step: number) =>
+  clamp(value + rand(-step, step), min, max)
 
 /** Status weights used when synthesising history / random transitions. */
 const STATUS_WEIGHTS: Array<[StationStatus, number]> = [
@@ -36,30 +37,30 @@ const STATUS_WEIGHTS: Array<[StationStatus, number]> = [
   ['faulted', 0.08],
 ]
 
-function weightedStatus(exclude?: StationStatus): StationStatus {
-  const pool = STATUS_WEIGHTS.filter(([s]) => s !== exclude)
-  const total = pool.reduce((sum, [, w]) => sum + w, 0)
-  let r = Math.random() * total
-  for (const [s, w] of pool) {
-    r -= w
-    if (r <= 0) return s
+const weightedStatus = (exclude?: StationStatus): StationStatus => {
+  const pool = STATUS_WEIGHTS.filter(([status]) => status !== exclude)
+  const total = pool.reduce((sum, [, weight]) => sum + weight, 0)
+  let roll = Math.random() * total
+  for (const [status, weight] of pool) {
+    roll -= weight
+    if (roll <= 0) return status
   }
   return pool[0][0]
 }
 
-let eventSeq = 0
-function makeEvent(
+let eventSequence = 0
+const makeEvent = (
   stationId: string,
   status: StationStatus,
   at: number,
-): StatusEvent {
-  eventSeq += 1
+): StatusEvent => {
+  eventSequence += 1
   return {
-    id: `evt-${eventSeq}`,
+    id: `evt-${eventSequence}`,
     stationId,
     timestamp: new Date(at).toISOString(),
     status,
-    message: pick(STATUS_MESSAGES[status]),
+    message: pickRandom(STATUS_MESSAGES[status]),
   }
 }
 
@@ -75,7 +76,7 @@ interface InternalSegment {
  * status (which started at `statusSince`). Built backwards from now so the
  * live segment lines up with the seeded state.
  */
-function seedHistory(station: Station, now: number): InternalSegment[] {
+const seedHistory = (station: Station, now: number): InternalSegment[] => {
   const windowStart = now - DAY
   const segments: InternalSegment[] = []
 
@@ -108,12 +109,17 @@ class FactorySimulation {
   constructor() {
     const now = Date.now()
     this.stations = seedStations(now)
-    for (const s of this.stations) {
-      this.history.set(s.id, seedHistory(s, now))
+    for (const station of this.stations) {
+      this.history.set(station.id, seedHistory(station, now))
       // Seed a couple of recent events so detail panels aren't empty.
-      this.events.push(makeEvent(s.id, s.status, Date.parse(s.statusSince)))
+      this.events.push(
+        makeEvent(station.id, station.status, Date.parse(station.statusSince)),
+      )
     }
-    this.events.sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    this.events.sort(
+      (first, second) =>
+        Date.parse(second.timestamp) - Date.parse(first.timestamp),
+    )
   }
 
   start() {
@@ -131,71 +137,81 @@ class FactorySimulation {
    * ---------------------------------------------------------------- */
   private tick() {
     const now = Date.now()
-    for (const s of this.stations) {
-      this.driftTelemetry(s)
+    for (const station of this.stations) {
+      this.driftTelemetry(station)
       // Low per-tick probability of a status change keeps the line stable.
-      if (chance(0.03)) this.transition(s, now, weightedStatus(s.status))
-      this.extendHistory(s.id, now)
+      if (chance(0.03)) {
+        this.transition(station, now, weightedStatus(station.status))
+      }
+      this.extendHistory(station.id, now)
     }
   }
 
-  private driftTelemetry(s: Station) {
-    const running = s.status === 'running'
-    const t = s.telemetry
-    switch (t.kind) {
+  private driftTelemetry(station: Station) {
+    const isRunning = station.status === 'running'
+    const telemetry = station.telemetry
+    switch (telemetry.kind) {
       case 'printer': {
-        t.chamberTempC = wander(t.chamberTempC, 175, 195, 1.5)
-        if (running) {
-          t.buildProgressPct = clamp(t.buildProgressPct + rand(0.4, 1.4), 0, 100)
-          if (t.buildProgressPct >= 100) {
+        telemetry.chamberTempC = wander(telemetry.chamberTempC, 175, 195, 1.5)
+        if (isRunning) {
+          telemetry.buildProgressPct = clamp(
+            telemetry.buildProgressPct + rand(0.4, 1.4),
+            0,
+            100,
+          )
+          if (telemetry.buildProgressPct >= 100) {
             // Build complete: release the part, load the next job.
-            this.completePart(s)
-            t.buildProgressPct = rand(0, 4)
-            t.materialRemainingPct = clamp(t.materialRemainingPct - rand(2, 5), 6, 100)
-            t.jobId = `JOB-${2284 + Math.floor(rand(1, 40))}`
+            this.completePart(station)
+            telemetry.buildProgressPct = rand(0, 4)
+            telemetry.materialRemainingPct = clamp(
+              telemetry.materialRemainingPct - rand(2, 5),
+              6,
+              100,
+            )
+            telemetry.jobId = `JOB-${2284 + Math.floor(rand(1, 40))}`
           }
         }
         break
       }
       case 'lathe': {
-        t.spindleRpm = running
-          ? Math.round(wander(t.spindleRpm || 4200, 3800, 4800, 120))
-          : Math.max(0, Math.round(t.spindleRpm - 600))
-        t.coolantTempC = wander(t.coolantTempC, 26, 36, 0.6)
+        telemetry.spindleRpm = isRunning
+          ? Math.round(wander(telemetry.spindleRpm || 4200, 3800, 4800, 120))
+          : Math.max(0, Math.round(telemetry.spindleRpm - 600))
+        telemetry.coolantTempC = wander(telemetry.coolantTempC, 26, 36, 0.6)
         break
       }
       case 'test-rig': {
-        if (running) {
-          t.testRunning = true
-          t.testDurationS += TICK_MS / 1000
-          t.inletPressureBar = wander(t.inletPressureBar, 195, 215, 2)
-          t.outletPressureBar = wander(t.outletPressureBar, 188, 206, 2)
-          t.flowRateLpm = wander(t.flowRateLpm, 32, 44, 1.2)
-          t.fluidTempC = wander(t.fluidTempC, 40, 50, 0.5)
-          if (t.testDurationS >= 90) {
+        if (isRunning) {
+          telemetry.testRunning = true
+          telemetry.testDurationS += TICK_MS / 1000
+          telemetry.inletPressureBar = wander(telemetry.inletPressureBar, 195, 215, 2)
+          telemetry.outletPressureBar = wander(telemetry.outletPressureBar, 188, 206, 2)
+          telemetry.flowRateLpm = wander(telemetry.flowRateLpm, 32, 44, 1.2)
+          telemetry.fluidTempC = wander(telemetry.fluidTempC, 40, 50, 0.5)
+          if (telemetry.testDurationS >= 90) {
             // Test finished: record result, advance the part, re-arm.
-            t.testResult = chance(0.92) ? 'pass' : 'fail'
-            this.completePart(s)
-            t.testDurationS = 0
-            t.partSerial = nextSerial()
+            telemetry.testResult = chance(0.92) ? 'pass' : 'fail'
+            this.completePart(station)
+            telemetry.testDurationS = 0
+            telemetry.partSerial = nextSerial()
           }
         } else {
-          t.testRunning = false
+          telemetry.testRunning = false
         }
         break
       }
       case 'marker': {
-        if (running && chance(0.4)) {
-          t.partsMarkedShift += 1
-          this.completePart(s)
+        if (isRunning && chance(0.4)) {
+          telemetry.partsMarkedShift += 1
+          this.completePart(station)
         }
         break
       }
       case 'shipping': {
-        if (running && chance(0.35)) {
-          t.partsDispatchedShift += 1
+        if (isRunning && chance(0.35)) {
+          telemetry.partsDispatchedShift += 1
           this.throughputToday += 1
-          this.completePart(s)
+          this.completePart(station)
         }
         break
       }
@@ -205,36 +221,38 @@ class FactorySimulation {
   }
 
   /** Move the head of the queue into the processed list. */
-  private completePart(s: Station) {
-    if (s.partsQueued.length === 0) {
-      s.partsQueued.push(nextSerial())
+  private completePart(station: Station) {
+    if (station.partsQueued.length === 0) {
+      station.partsQueued.push(nextSerial())
     }
-    const done = s.partsQueued.shift()!
-    s.partsProcessed.push(done)
+    const completed = station.partsQueued.shift()!
+    station.partsProcessed.push(completed)
     // Keep an upstream backlog so queues don't drain to nothing.
-    if (s.partsQueued.length < 2 && chance(0.5)) s.partsQueued.push(nextSerial())
+    if (station.partsQueued.length < 2 && chance(0.5)) {
+      station.partsQueued.push(nextSerial())
+    }
   }
 
-  private transition(s: Station, now: number, to: StationStatus) {
-    if (to === s.status) return
-    s.status = to
-    s.statusSince = new Date(now).toISOString()
-    this.events.unshift(makeEvent(s.id, to, now))
+  private transition(station: Station, now: number, to: StationStatus) {
+    if (to === station.status) return
+    station.status = to
+    station.statusSince = new Date(now).toISOString()
+    this.events.unshift(makeEvent(station.id, to, now))
     if (this.events.length > 200) this.events.length = 200
 
     // Close the open history segment and open a new one.
-    const segs = this.history.get(s.id)!
-    segs[segs.length - 1].end = now
-    segs.push({ status: to, start: now, end: now })
+    const segments = this.history.get(station.id)!
+    segments[segments.length - 1].end = now
+    segments.push({ status: to, start: now, end: now })
   }
 
-  private extendHistory(id: string, now: number) {
-    const segs = this.history.get(id)!
-    segs[segs.length - 1].end = now
+  private extendHistory(stationId: string, now: number) {
+    const segments = this.history.get(stationId)!
+    segments[segments.length - 1].end = now
     // Drop segments that have aged out of the 24h window.
     const cutoff = now - DAY
-    while (segs.length > 1 && segs[1].end < cutoff) segs.shift()
-    if (segs[0].start < cutoff) segs[0].start = cutoff
+    while (segments.length > 1 && segments[1].end < cutoff) segments.shift()
+    if (segments[0].start < cutoff) segments[0].start = cutoff
   }
 
   /* ----------------------------------------------------------------
@@ -243,19 +261,19 @@ class FactorySimulation {
 
   getStations(): Station[] {
     const now = Date.now()
-    return this.stations.map((s) => ({
-      ...structuredClone(s),
-      utilisation24h: this.utilisationFor(s.id, now - DAY, now),
+    return this.stations.map((station) => ({
+      ...structuredClone(station),
+      utilisation24h: this.utilisationFor(station.id, now - DAY, now),
     }))
   }
 
   getStation(id: string): Station | undefined {
-    return this.getStations().find((s) => s.id === id)
+    return this.getStations().find((station) => station.id === id)
   }
 
   getEvents(stationId?: string, limit = 25): StatusEvent[] {
     const list = stationId
-      ? this.events.filter((e) => e.stationId === stationId)
+      ? this.events.filter((event) => event.stationId === stationId)
       : this.events
     return list.slice(0, limit)
   }
@@ -263,9 +281,9 @@ class FactorySimulation {
   getHistory(range: TimeRange): StationHistory[] {
     const now = Date.now()
     const start = now - this.rangeMs(range)
-    return this.stations.map((s) => ({
-      stationId: s.id,
-      segments: this.clipSegments(s.id, start, now),
+    return this.stations.map((station) => ({
+      stationId: station.id,
+      segments: this.clipSegments(station.id, start, now),
     }))
   }
 
@@ -274,10 +292,10 @@ class FactorySimulation {
     const span = this.rangeMs(range)
     const step = this.sampleStep(range)
     const samples: UtilisationSample[] = []
-    for (let t = now - span; t <= now; t += step) {
+    for (let time = now - span; time <= now; time += step) {
       samples.push({
-        timestamp: new Date(t).toISOString(),
-        utilisationPct: Math.round(this.runningFractionAt(t) * 100),
+        timestamp: new Date(time).toISOString(),
+        utilisationPct: Math.round(this.runningFractionAt(time) * 100),
       })
     }
     return samples
@@ -307,47 +325,51 @@ class FactorySimulation {
         : 30 * 60 * 1000
   }
 
-  private statusAt(id: string, t: number): StationStatus | null {
-    const segs = this.history.get(id)
-    if (!segs) return null
-    for (const seg of segs) {
-      if (t >= seg.start && t <= seg.end) return seg.status
+  private statusAt(stationId: string, time: number): StationStatus | null {
+    const segments = this.history.get(stationId)
+    if (!segments) return null
+    for (const segment of segments) {
+      if (time >= segment.start && time <= segment.end) return segment.status
     }
-    if (segs.length && t < segs[0].start) return segs[0].status
-    return segs.length ? segs[segs.length - 1].status : null
+    if (segments.length && time < segments[0].start) return segments[0].status
+    return segments.length ? segments[segments.length - 1].status : null
   }
 
-  /** Fraction of stations running at instant `t`, 0..1. */
-  private runningFractionAt(t: number): number {
+  /** Fraction of stations running at the given instant, 0..1. */
+  private runningFractionAt(time: number): number {
     let running = 0
-    for (const s of this.stations) {
-      if (this.statusAt(s.id, t) === 'running') running += 1
+    for (const station of this.stations) {
+      if (this.statusAt(station.id, time) === 'running') running += 1
     }
     return running / this.stations.length
   }
 
   /** Fraction of the [from,to] window a station spent running, 0..1. */
-  private utilisationFor(id: string, from: number, to: number): number {
-    const segs = this.history.get(id)
-    if (!segs) return 0
+  private utilisationFor(stationId: string, from: number, to: number): number {
+    const segments = this.history.get(stationId)
+    if (!segments) return 0
     let runningMs = 0
-    for (const seg of segs) {
-      if (seg.status !== 'running') continue
-      const a = Math.max(seg.start, from)
-      const b = Math.min(seg.end, to)
-      if (b > a) runningMs += b - a
+    for (const segment of segments) {
+      if (segment.status !== 'running') continue
+      const overlapStart = Math.max(segment.start, from)
+      const overlapEnd = Math.min(segment.end, to)
+      if (overlapEnd > overlapStart) runningMs += overlapEnd - overlapStart
     }
     return clamp(runningMs / (to - from), 0, 1)
   }
 
-  private clipSegments(id: string, from: number, to: number): StatusSegment[] {
-    const segs = this.history.get(id) ?? []
-    return segs
-      .filter((seg) => seg.end > from && seg.start < to)
-      .map((seg) => ({
-        status: seg.status,
-        start: new Date(Math.max(seg.start, from)).toISOString(),
-        end: new Date(Math.min(seg.end, to)).toISOString(),
+  private clipSegments(
+    stationId: string,
+    from: number,
+    to: number,
+  ): StatusSegment[] {
+    const segments = this.history.get(stationId) ?? []
+    return segments
+      .filter((segment) => segment.end > from && segment.start < to)
+      .map((segment) => ({
+        status: segment.status,
+        start: new Date(Math.max(segment.start, from)).toISOString(),
+        end: new Date(Math.min(segment.end, to)).toISOString(),
       }))
   }
 
@@ -355,7 +377,7 @@ class FactorySimulation {
   meanUtilisation(range: TimeRange): number {
     const series = this.getUtilisationSeries(range)
     if (!series.length) return 0
-    const sum = series.reduce((acc, s) => acc + s.utilisationPct, 0)
+    const sum = series.reduce((total, sample) => total + sample.utilisationPct, 0)
     return sum / series.length
   }
 
@@ -365,12 +387,12 @@ class FactorySimulation {
     const span = this.rangeMs(range)
     const step = this.sampleStep(range)
     let sum = 0
-    let n = 0
-    for (let t = now - 2 * span; t <= now - span; t += step) {
-      sum += this.runningFractionAt(t) * 100
-      n += 1
+    let count = 0
+    for (let time = now - 2 * span; time <= now - span; time += step) {
+      sum += this.runningFractionAt(time) * 100
+      count += 1
     }
-    return n ? sum / n : 0
+    return count ? sum / count : 0
   }
 }
 

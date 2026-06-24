@@ -5,33 +5,33 @@ export interface TelemetryRow {
   value: string
 }
 
-const round = (n: number, dp = 0) =>
-  n.toLocaleString('en-GB', { maximumFractionDigits: dp })
+const round = (value: number, decimalPlaces = 0) =>
+  value.toLocaleString('en-GB', { maximumFractionDigits: decimalPlaces })
 
 /**
  * The single most informative telemetry value for a machine, shown large on
  * the floor-map card. Honing reports state only, so it has no headline.
  */
-export function telemetryHeadline(station: Station): string | null {
-  const t = station.telemetry
-  switch (t.kind) {
+export const telemetryHeadline = (station: Station): string | null => {
+  const telemetry = station.telemetry
+  switch (telemetry.kind) {
     case 'printer':
-      return `Build ${Math.round(t.buildProgressPct)}%`
+      return `Build ${Math.round(telemetry.buildProgressPct)}%`
     case 'lathe':
-      return `${round(t.spindleRpm)} rpm`
+      return `${round(telemetry.spindleRpm)} rpm`
     case 'test-rig':
-      return t.partSerial ?? 'No part'
+      return telemetry.partSerial ?? 'No part'
     case 'marker':
-      return `${t.partsMarkedShift} marked`
+      return `${telemetry.partsMarkedShift} marked`
     case 'shipping':
-      return `${t.partsDispatchedShift} shipped`
+      return `${telemetry.partsDispatchedShift} shipped`
     case 'honing':
       return null
   }
 }
 
 /** Full set of telemetry read-outs for a machine, for the detail panel. */
-export function telemetryRows(telemetry: Telemetry): TelemetryRow[] {
+export const telemetryRows = (telemetry: Telemetry): TelemetryRow[] => {
   switch (telemetry.kind) {
     case 'printer':
       return [

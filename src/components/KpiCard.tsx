@@ -13,7 +13,7 @@ export interface KpiDelta {
  * A single dashboard KPI: label, large value with optional trend delta, a
  * footer line, and an optional visual (e.g. a sparkline) in the lower slot.
  */
-export function KpiCard({
+export const KpiCard = ({
   label,
   value,
   delta,
@@ -28,8 +28,8 @@ export function KpiCard({
   children?: ReactNode
   /** Optional colour for the value, e.g. red for active faults. */
   accent?: string
-}) {
-  const up = delta != null && delta.value >= 0
+}) => {
+  const isPositive = delta != null && delta.value >= 0
   return (
     <Card className="flex flex-col p-4">
       <p className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
@@ -46,10 +46,10 @@ export function KpiCard({
           <span
             className={cn(
               'flex items-center gap-0.5 text-xs font-medium',
-              up ? 'text-emerald-600' : 'text-red-600',
+              isPositive ? 'text-emerald-600' : 'text-red-600',
             )}
           >
-            {up ? (
+            {isPositive ? (
               <TrendingUp className="h-3.5 w-3.5" />
             ) : (
               <TrendingDown className="h-3.5 w-3.5" />

@@ -1,26 +1,25 @@
 import type { Station, StationStatus } from '@/api/types'
 
 /** Generate a hydraulic-valve serial, e.g. "VLV-21-04412". */
-export function makeSerial(seq: number): string {
+export const makeSerial = (sequence: number): string => {
   const batch = 21
-  return `VLV-${batch}-${String(seq).padStart(5, '0')}`
+  return `VLV-${batch}-${String(sequence).padStart(5, '0')}`
 }
 
-let serialSeq = 4400
-export function nextSerial(): string {
-  serialSeq += 1
-  return makeSerial(serialSeq)
+let serialSequence = 4400
+export const nextSerial = (): string => {
+  serialSequence += 1
+  return makeSerial(serialSequence)
 }
 
-function queue(n: number): string[] {
-  return Array.from({ length: n }, () => nextSerial())
-}
+const queueOf = (count: number): string[] =>
+  Array.from({ length: count }, () => nextSerial())
 
 /**
  * Initial production-line state. Statuses are chosen to match the reference
  * design: 3 running, 1 idle, 1 faulted, 1 maintenance.
  */
-export function seedStations(now: number): Station[] {
+export const seedStations = (now: number): Station[] => {
   const since = (minutesAgo: number) =>
     new Date(now - minutesAgo * 60_000).toISOString()
 
@@ -33,8 +32,8 @@ export function seedStations(now: number): Station[] {
       status: 'running',
       statusSince: since(134),
       utilisation24h: 0.56,
-      partsQueued: queue(4),
-      partsProcessed: queue(18),
+      partsQueued: queueOf(4),
+      partsProcessed: queueOf(18),
       telemetry: {
         kind: 'printer',
         chamberTempC: 184,
@@ -52,8 +51,8 @@ export function seedStations(now: number): Station[] {
       status: 'running',
       statusSince: since(65),
       utilisation24h: 0.49,
-      partsQueued: queue(3),
-      partsProcessed: queue(26),
+      partsQueued: queueOf(3),
+      partsProcessed: queueOf(26),
       telemetry: {
         kind: 'lathe',
         spindleRpm: 4250,
@@ -69,8 +68,8 @@ export function seedStations(now: number): Station[] {
       status: 'idle',
       statusSince: since(43),
       utilisation24h: 0.63,
-      partsQueued: queue(2),
-      partsProcessed: queue(22),
+      partsQueued: queueOf(2),
+      partsProcessed: queueOf(22),
       telemetry: { kind: 'honing' },
       layout: { col: 2, row: 0 },
     },
@@ -82,8 +81,8 @@ export function seedStations(now: number): Station[] {
       status: 'running',
       statusSince: since(27),
       utilisation24h: 0.45,
-      partsQueued: queue(5),
-      partsProcessed: queue(21),
+      partsQueued: queueOf(5),
+      partsProcessed: queueOf(21),
       telemetry: {
         kind: 'test-rig',
         testRunning: true,
@@ -105,8 +104,8 @@ export function seedStations(now: number): Station[] {
       status: 'faulted',
       statusSince: since(18),
       utilisation24h: 0.9,
-      partsQueued: queue(6),
-      partsProcessed: queue(87),
+      partsQueued: queueOf(6),
+      partsProcessed: queueOf(87),
       telemetry: {
         kind: 'marker',
         partsMarkedShift: 87,
@@ -121,8 +120,8 @@ export function seedStations(now: number): Station[] {
       status: 'maintenance',
       statusSince: since(72),
       utilisation24h: 0.64,
-      partsQueued: queue(3),
-      partsProcessed: queue(64),
+      partsQueued: queueOf(3),
+      partsProcessed: queueOf(64),
       telemetry: {
         kind: 'shipping',
         partsDispatchedShift: 64,

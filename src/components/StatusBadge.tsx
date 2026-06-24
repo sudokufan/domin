@@ -2,7 +2,7 @@ import type { StationStatus } from '@/api/types'
 import { cn } from '@/lib/cn'
 import { statusStyle } from '@/lib/status'
 
-export function StatusDot({
+export const StatusDot = ({
   status,
   className,
   ping = false,
@@ -10,7 +10,7 @@ export function StatusDot({
   status: StationStatus
   className?: string
   ping?: boolean
-}) {
+}) => {
   const style = statusStyle(status)
   if (ping && status === 'running') {
     return (
@@ -23,13 +23,13 @@ export function StatusDot({
   return <span className={cn('inline-block h-2 w-2 rounded-full', style.dot, className)} />
 }
 
-export function StatusBadge({
+export const StatusBadge = ({
   status,
   className,
 }: {
   status: StationStatus
   className?: string
-}) {
+}) => {
   const style = statusStyle(status)
   return (
     <span

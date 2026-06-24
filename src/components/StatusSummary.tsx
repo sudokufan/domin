@@ -4,11 +4,13 @@ import { Card } from './Card'
 import { statusStyle } from '@/lib/status'
 
 /** The four status-count tiles shown above the stations table. */
-export function StatusSummary({ stations }: { stations: Station[] }) {
+export const StatusSummary = ({ stations }: { stations: Station[] }) => {
   const counts = STATION_STATUSES.reduce(
-    (acc, status) => {
-      acc[status] = stations.filter((s) => s.status === status).length
-      return acc
+    (totals, status) => {
+      totals[status] = stations.filter(
+        (station) => station.status === status,
+      ).length
+      return totals
     },
     {} as Record<StationStatus, number>,
   )

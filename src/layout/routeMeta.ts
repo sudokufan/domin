@@ -10,6 +10,5 @@ export const ROUTE_LABELS: Record<string, string> = {
   '/settings': 'Settings',
 }
 
-export function routeLabel(pathname: string): string {
-  return ROUTE_LABELS[pathname] ?? 'Overview'
-}
+export const routeLabel = (pathname: string): string =>
+  ROUTE_LABELS[pathname] ?? 'Overview'

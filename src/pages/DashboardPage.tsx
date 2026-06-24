@@ -4,8 +4,7 @@ import { useDashboard } from '@/hooks/useDashboard'
 import { useStations } from '@/hooks/useStations'
 import { PageHeader } from '@/components/PageHeader'
 import { Card, CardHeader } from '@/components/Card'
-import { KpiCard } from '@/components/KpiCard'
-import { Sparkline } from '@/components/Sparkline'
+import { DashboardKpis } from '@/components/DashboardKpis'
 import { UtilisationChart } from '@/components/UtilisationChart'
 import { StatusTimeline } from '@/components/StatusTimeline'
 import { StatusLegend } from '@/components/StatusLegend'
@@ -25,14 +24,31 @@ const RANGE_LABEL: Record<TimeRange, string> = {
   '24h': 'last 24 hours',
 }
 
-export function DashboardPage() {
+const DashboardSkeleton = () => (
+  <div className="space-y-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <Card key={index} className="p-4">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="mt-3 h-8 w-20" />
+          <Skeleton className="mt-3 h-10 w-full" />
+        </Card>
+      ))}
+    </div>
+    <Card className="p-5">
+      <Skeleton className="h-64 w-full" />
+    </Card>
+  </div>
+)
+
+export const DashboardPage = () => {
   const [range, setRange] = useState<TimeRange>('24h')
   const { data, error, refetch } = useDashboard(range)
   const { data: stations } = useStations()
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   return (
-    <div className="px-6 py-5">
+    <div className="px-4 py-5 sm:px-6">
       <PageHeader
         eyebrow="Production line · Site 1 · Bay A"
         title="Operational dashboard"
@@ -47,43 +63,7 @@ export function DashboardPage() {
         <DashboardSkeleton />
       ) : (
         <div className="space-y-4">
-          {/* KPIs */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <KpiCard
-              label={`Factory utilisation · ${range}`}
-              value={`${data.factoryUtilisationPct}%`}
-              delta={{ value: data.factoryUtilisationDeltaPp, unit: ' pp' }}
-            >
-              <Sparkline
-                data={data.utilisationSeries.map((s) => s.utilisationPct)}
-              />
-            </KpiCard>
-
-            <KpiCard
-              label="Stations running"
-              value={`${data.stationsRunning}/${data.stationsTotal}`}
-              footer={`${data.stationsTotal - data.stationsRunning} not producing`}
-            />
-
-            <KpiCard
-              label="Active faults"
-              value={data.activeFaults.length}
-              accent={data.activeFaults.length > 0 ? '#ef4444' : undefined}
-              footer={
-                data.activeFaults.length > 0
-                  ? data.activeFaults.map((f) => f.stationId).join(', ')
-                  : 'No active faults'
-              }
-            />
-
-            <KpiCard
-              label="Throughput · today"
-              value={data.throughputToday}
-              footer={`Target ${data.throughputTarget} · ${Math.round(
-                (data.throughputToday / data.throughputTarget) * 100,
-              )}%`}
-            />
-          </div>
+          <DashboardKpis data={data} range={range} />
 
           {/* Utilisation chart */}
           <Card>
@@ -111,16 +91,18 @@ export function DashboardPage() {
                 </span>
               }
             />
-            <div className="px-5 pt-3 pb-5">
-              <StatusTimeline
-                history={data.timeline}
-                stations={stations ?? []}
-                range={range}
-                selectedId={selectedId}
-                onSelect={(id) =>
-                  setSelectedId((cur) => (cur === id ? null : id))
-                }
-              />
+            <div className="overflow-x-auto px-5 pt-3 pb-5">
+              <div className="min-w-[480px]">
+                <StatusTimeline
+                  history={data.timeline}
+                  stations={stations ?? []}
+                  range={range}
+                  selectedId={selectedId}
+                  onSelect={(id) =>
+                    setSelectedId((current) => (current === id ? null : id))
+                  }
+                />
+              </div>
             </div>
           </Card>
 
@@ -135,25 +117,6 @@ export function DashboardPage() {
           )}
         </div>
       )}
-    </div>
-  )
-}
-
-function DashboardSkeleton() {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="p-4">
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="mt-3 h-8 w-20" />
-            <Skeleton className="mt-3 h-10 w-full" />
-          </Card>
-        ))}
-      </div>
-      <Card className="p-5">
-        <Skeleton className="h-64 w-full" />
-      </Card>
     </div>
   )
 }

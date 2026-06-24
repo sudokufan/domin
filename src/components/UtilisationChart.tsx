@@ -11,7 +11,7 @@ import {
 import type { TimeRange, UtilisationSample } from '@/api/types'
 import { useNow } from '@/hooks/useNow'
 
-function tickLabel(iso: string, range: TimeRange, now: number): string {
+const tickLabel = (iso: string, range: TimeRange, now: number): string => {
   if (range === '24h') {
     const hoursAgo = Math.round((now - Date.parse(iso)) / 3_600_000)
     return hoursAgo <= 0 ? 'now' : `-${hoursAgo}h`
@@ -27,7 +27,7 @@ function tickLabel(iso: string, range: TimeRange, now: number): string {
  * across the selected range, with the utilisation target drawn as a reference
  * line so it's obvious when the line dips below target.
  */
-export function UtilisationChart({
+export const UtilisationChart = ({
   data,
   targetPct,
   range,
@@ -35,7 +35,7 @@ export function UtilisationChart({
   data: UtilisationSample[]
   targetPct: number
   range: TimeRange
-}) {
+}) => {
   // Relative axis labels only need minute-level freshness.
   const now = useNow(60_000)
   return (
@@ -50,7 +50,7 @@ export function UtilisationChart({
         <CartesianGrid stroke="#eef1f4" vertical={false} />
         <XAxis
           dataKey="timestamp"
-          tickFormatter={(v: string) => tickLabel(v, range, now)}
+          tickFormatter={(value: string) => tickLabel(value, range, now)}
           tick={{ fontSize: 11, fill: '#94a3b8' }}
           axisLine={false}
           tickLine={false}
@@ -59,7 +59,7 @@ export function UtilisationChart({
         <YAxis
           domain={[0, 100]}
           ticks={[0, 25, 50, 75, 100]}
-          tickFormatter={(v: number) => `${v}%`}
+          tickFormatter={(value: number) => `${value}%`}
           tick={{ fontSize: 11, fill: '#94a3b8' }}
           axisLine={false}
           tickLine={false}
@@ -73,8 +73,8 @@ export function UtilisationChart({
             fontSize: 12,
             boxShadow: '0 4px 12px rgb(0 0 0 / 0.06)',
           }}
-          labelFormatter={(v) =>
-            new Date(v).toLocaleString('en-GB', {
+          labelFormatter={(value) =>
+            new Date(value).toLocaleString('en-GB', {
               hour: '2-digit',
               minute: '2-digit',
               day: 'numeric',

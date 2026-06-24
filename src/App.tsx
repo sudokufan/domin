@@ -5,7 +5,7 @@ import { FloorMapPage } from '@/pages/FloorMapPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { StubPage } from '@/pages/StubPage'
 
-function App() {
+const App = () => {
   return (
     <Routes>
       <Route element={<AppLayout />}>

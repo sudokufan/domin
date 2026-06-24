@@ -16,29 +16,32 @@ const MOCK_LATENCY_MS = 180
 
 export { ApiError }
 
-export async function apiGet<T>(
+const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms))
+
+const ensureTrailingSlash = (url: string) =>
+  url.endsWith('/') ? url : `${url}/`
+
+export const apiGet = async <Data,>(
   path: string,
   params: Record<string, string> = {},
-): Promise<T> {
+): Promise<Data> => {
   if (USE_MOCK) {
     await delay(MOCK_LATENCY_MS)
-    return handleRequest<T>(path, params)
+    return handleRequest<Data>(path, params)
   }
 
   const url = new URL(path.replace(/^\//, ''), ensureTrailingSlash(BASE_URL!))
-  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v)
-
-  const res = await fetch(url, { headers: { Accept: 'application/json' } })
-  if (!res.ok) {
-    throw new ApiError(res.status, `Request failed: ${res.status} ${res.statusText}`)
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value)
   }
-  return (await res.json()) as T
-}
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-function ensureTrailingSlash(s: string) {
-  return s.endsWith('/') ? s : `${s}/`
+  const response = await fetch(url, { headers: { Accept: 'application/json' } })
+  if (!response.ok) {
+    throw new ApiError(
+      response.status,
+      `Request failed: ${response.status} ${response.statusText}`,
+    )
+  }
+  return (await response.json()) as Data
 }

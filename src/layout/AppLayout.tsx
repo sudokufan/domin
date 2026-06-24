@@ -1,14 +1,17 @@
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 
-/** App shell: fixed sidebar + topbar, scrollable page content. */
-export function AppLayout() {
+/** App shell: sidebar (static on desktop, drawer on mobile) + topbar + content. */
+export const AppLayout = () => {
+  const [isNavOpen, setIsNavOpen] = useState(false)
+
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
+      <Sidebar isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar />
+        <Topbar onMenuClick={() => setIsNavOpen(true)} />
         <main className="flex-1 overflow-y-auto">
           <Outlet />
         </main>

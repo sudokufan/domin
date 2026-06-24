@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react'
  * "last sync" labels that must advance even between polls. Updates on a plain
  * interval — no data fetching involved, so it doesn't belong in React Query.
  */
-export function useNow(intervalMs = 1000): number {
+export const useNow = (intervalMs = 1000): number => {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), intervalMs)
-    return () => clearInterval(id)
+    const intervalId = setInterval(() => setNow(Date.now()), intervalMs)
+    return () => clearInterval(intervalId)
   }, [intervalMs])
   return now
 }

@@ -49,9 +49,34 @@ const SECTIONS: NavSection[] = [
   },
 ]
 
-export function Sidebar() {
-  return (
-    <aside className="flex h-full w-60 shrink-0 flex-col bg-sidebar text-slate-300">
+/**
+ * Primary navigation. A static rail from `lg` up; below that it becomes an
+ * off-canvas drawer toggled by the Topbar hamburger, with a tap-to-dismiss
+ * backdrop. Selecting an item closes the drawer.
+ */
+export const Sidebar = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean
+  onClose: () => void
+}) => (
+  <>
+    <div
+      className={cn(
+        'fixed inset-0 z-30 bg-slate-900/50 lg:hidden',
+        isOpen ? 'block' : 'hidden',
+      )}
+      onClick={onClose}
+      aria-hidden
+    />
+
+    <aside
+      className={cn(
+        'fixed inset-y-0 left-0 z-40 flex h-full w-60 shrink-0 flex-col bg-sidebar text-slate-300 transition-transform duration-200 lg:static lg:translate-x-0',
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+      )}
+    >
       {/* Brand */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-center gap-2">
@@ -86,6 +111,7 @@ export function Sidebar() {
                 <li key={item.to}>
                   <NavLink
                     to={item.to}
+                    onClick={onClose}
                     className={({ isActive }) =>
                       cn(
                         'group flex items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
@@ -100,7 +126,9 @@ export function Sidebar() {
                         <item.icon
                           className={cn(
                             'h-[18px] w-[18px] shrink-0',
-                            isActive ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300',
+                            isActive
+                              ? 'text-emerald-400'
+                              : 'text-slate-500 group-hover:text-slate-300',
                           )}
                         />
                         <span className="flex-1">{item.label}</span>
@@ -137,5 +165,5 @@ export function Sidebar() {
         </button>
       </div>
     </aside>
-  )
-}
+  </>
+)

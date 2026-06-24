@@ -1,7 +1,7 @@
 import { Area, AreaChart, ResponsiveContainer, YAxis } from 'recharts'
 
 /** Tiny axis-less area chart for KPI cards. */
-export function Sparkline({
+export const Sparkline = ({
   data,
   color = '#22c55e',
   height = 40,
@@ -9,15 +9,15 @@ export function Sparkline({
   data: number[]
   color?: string
   height?: number
-}) {
-  const points = data.map((v, i) => ({ i, v }))
+}) => {
+  const points = data.map((value, index) => ({ index, value }))
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={points} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
         <YAxis hide domain={['dataMin - 5', 'dataMax + 5']} />
         <Area
           type="monotone"
-          dataKey="v"
+          dataKey="value"
           stroke={color}
           strokeWidth={1.5}
           fill={color}

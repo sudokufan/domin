@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { useStation, useStationEvents } from '@/hooks/useStation'
 import { useNow } from '@/hooks/useNow'
@@ -8,18 +9,44 @@ import { StatusBadge } from './StatusBadge'
 import { UtilisationBar } from './UtilisationBar'
 import { Skeleton } from './states'
 
+const Section = ({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) => (
+  <section>
+    <h4 className="mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
+      {title}
+    </h4>
+    {children}
+  </section>
+)
+
+const Metric = ({ label, value }: { label: string; value: string }) => (
+  <div>
+    <p className="text-[11px] font-medium tracking-wide text-slate-400 uppercase">
+      {label}
+    </p>
+    <p className="mt-1 text-lg font-semibold text-slate-900 tabular-nums">
+      {value}
+    </p>
+  </div>
+)
+
 /**
  * Live detail for one station: status, time-in-state, telemetry read-outs,
  * parts, 24h utilisation and recent events. Polls independently so it stays
  * current while open.
  */
-export function StationDetail({
+export const StationDetail = ({
   stationId,
   onClose,
 }: {
   stationId: string
   onClose?: () => void
-}) {
+}) => {
   const { data: station, isLoading } = useStation(stationId)
   const { data: events } = useStationEvents(stationId)
   const now = useNow()
@@ -34,7 +61,7 @@ export function StationDetail({
     )
   }
 
-  const rows = telemetryRows(station.telemetry)
+  const readouts = telemetryRows(station.telemetry)
 
   return (
     <div className="flex h-full flex-col">
@@ -82,26 +109,24 @@ export function StationDetail({
         </div>
 
         {/* Telemetry */}
-        {rows.length > 0 ? (
-          <Section title="Live telemetry">
+        <Section title="Live telemetry">
+          {readouts.length > 0 ? (
             <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-              {rows.map((row) => (
-                <div key={row.label} className="flex flex-col">
-                  <dt className="text-[11px] text-slate-400">{row.label}</dt>
+              {readouts.map((readout) => (
+                <div key={readout.label} className="flex flex-col">
+                  <dt className="text-[11px] text-slate-400">{readout.label}</dt>
                   <dd className="text-sm font-medium text-slate-800 tabular-nums">
-                    {row.value}
+                    {readout.value}
                   </dd>
                 </div>
               ))}
             </dl>
-          </Section>
-        ) : (
-          <Section title="Live telemetry">
+          ) : (
             <p className="text-xs text-slate-400">
               This machine reports operational state only.
             </p>
-          </Section>
-        )}
+          )}
+        </Section>
 
         {/* Parts */}
         <Section title="Parts">
@@ -143,36 +168,6 @@ export function StationDetail({
           )}
         </Section>
       </div>
-    </div>
-  )
-}
-
-function Section({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section>
-      <h4 className="mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-        {title}
-      </h4>
-      {children}
-    </section>
-  )
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-[11px] font-medium tracking-wide text-slate-400 uppercase">
-        {label}
-      </p>
-      <p className="mt-1 text-lg font-semibold text-slate-900 tabular-nums">
-        {value}
-      </p>
     </div>
   )
 }

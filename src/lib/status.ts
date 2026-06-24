@@ -48,6 +48,5 @@ export const STATUS_STYLES: Record<StationStatus, StatusStyle> = {
   },
 }
 
-export function statusStyle(status: StationStatus): StatusStyle {
-  return STATUS_STYLES[status]
-}
+export const statusStyle = (status: StationStatus): StatusStyle =>
+  STATUS_STYLES[status]

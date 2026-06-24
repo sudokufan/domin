@@ -43,11 +43,19 @@ src/
       simulation.ts   ticking state, 24h history, utilisation aggregates
       handlers.ts     resolves request paths against the simulation
   hooks/        usePolling primitive + useStations / useStation / useDashboard
-  layout/       AppLayout, Sidebar, Topbar
-  components/   reusable UI (StatusBadge, KpiCard, charts, timeline, …)
+  layout/       AppLayout, Sidebar (drawer on mobile), Topbar
+  components/   reusable UI — composed into pages:
+                  Stations  → StatusSummary, StationFilters, StationsTable
+                  Floor map → ProcessFlow, FlowConnector, StationCard,
+                              StationInspectorPanel
+                  Dashboard → DashboardKpis, UtilisationChart, StatusTimeline
+                  shared    → StatusBadge, Card, KpiCard, Sparkline, states, …
   pages/        StationsPage, FloorMapPage, DashboardPage, StubPage
   lib/          status palette, formatting, CSV export, telemetry presentation
 ```
+
+Pages stay thin: they own state (filters, selection, range) and compose
+components; the components are presentational and reusable.
 
 **Data flows one way:** `pages → hooks → endpoints → client → (mock | real API)`.
 Components never construct request paths or touch the simulation; they only
@@ -88,6 +96,20 @@ be deleted.
   not a numeric series, so it's plain positioned divs rather than a chart
   library — lighter and more controllable. Recharts is reserved for the
   utilisation area chart and KPI sparklines.
+
+- **Floor map as a process flow, not a fixed bay grid.** Stations render in
+  process order (`ProcessFlow`) linked by `FlowConnector`s coloured by the
+  upstream station's status — so a faulted machine visibly breaks the flow
+  downstream. This is laid out as a horizontal line on wide screens and a
+  vertical stack on small ones, which both expresses the flow and stays legible
+  at any width (no overflow). The station cards use a **CSS container query** to
+  drop the status label to a dot when a card gets narrow, so they fit whether
+  the flow is full-width or sharing space with the inspector panel.
+
+- **Responsive throughout.** The sidebar collapses to a hamburger drawer below
+  `lg`; the topbar sheds the breadcrumb/date progressively; the stations table
+  drops lower-priority columns (Stage, Type, then time/utilisation) as width
+  shrinks and scrolls horizontally as a last resort.
 
 ## Accessibility
 
