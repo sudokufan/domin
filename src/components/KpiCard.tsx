@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { TrendingDown, TrendingUp } from 'lucide-react'
 import { Card } from './Card'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 export interface KpiDelta {
   /** Percentage-point (or unit) change; sign drives the arrow + colour. */
@@ -44,7 +44,7 @@ export const KpiCard = ({
         </span>
         {delta != null && (
           <span
-            className={cn(
+            className={clsx(
               'flex items-center gap-0.5 text-xs font-medium',
               isPositive ? 'text-emerald-600' : 'text-red-600',
             )}

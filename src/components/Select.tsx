@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 export interface SelectOption {
   value: string
@@ -20,7 +20,7 @@ export const Select = ({
   ariaLabel: string
   className?: string
 }) => (
-  <div className={cn('relative', className)}>
+  <div className={clsx('relative', className)}>
     <select
       aria-label={ariaLabel}
       value={value}

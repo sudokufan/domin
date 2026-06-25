@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { Station, StationHistory, TimeRange } from '@/api/types'
 import { useNow } from '@/hooks/useNow'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 import { statusStyle } from '@/lib/status'
 import { formatDuration } from '@/lib/format'
 
@@ -78,7 +78,7 @@ export const StatusTimeline = ({
               <button
                 type="button"
                 onClick={() => onSelect?.(row.stationId)}
-                className={cn(
+                className={clsx(
                   'w-28 shrink-0 truncate text-left text-xs sm:w-40',
                   isSelected
                     ? 'font-semibold text-slate-900'
@@ -91,7 +91,7 @@ export const StatusTimeline = ({
               </button>
 
               <div
-                className={cn(
+                className={clsx(
                   'relative h-5 flex-1 overflow-hidden rounded bg-slate-100',
                   isSelected && 'ring-2 ring-emerald-400/50',
                 )}

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 /** White surface used for every panel/card in the UI. */
 export const Card = ({
@@ -10,7 +10,7 @@ export const Card = ({
   className?: string
 }) => (
   <div
-    className={cn(
+    className={clsx(
       'rounded-xl border border-slate-200 bg-white shadow-sm',
       className,
     )}
@@ -31,7 +31,7 @@ export const CardHeader = ({
   className?: string
 }) => (
   <div
-    className={cn(
+    className={clsx(
       'flex flex-wrap items-start justify-between gap-3 px-5 pt-4',
       className,
     )}

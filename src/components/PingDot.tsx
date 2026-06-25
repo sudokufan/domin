@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 /**
  * A pulsing "live" indicator: a solid dot with an expanding ping ring behind
@@ -24,13 +24,13 @@ export const PingDot = ({
   className?: string
   title?: string
 }) => (
-  <span className={cn('relative flex', size, className)} title={title}>
+  <span className={clsx('relative flex', size, className)} title={title}>
     <span
-      className={cn(
+      className={clsx(
         'absolute inline-flex h-full w-full animate-ping rounded-full opacity-75',
         pingColor ?? color,
       )}
     />
-    <span className={cn('relative inline-flex rounded-full', size, color)} />
+    <span className={clsx('relative inline-flex rounded-full', size, color)} />
   </span>
 )

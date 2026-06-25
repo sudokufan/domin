@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 /** Grey shimmer block for loading placeholders. */
 export const Skeleton = ({ className }: { className?: string }) => (
-  <div className={cn('animate-pulse rounded bg-slate-200/70', className)} />
+  <div className={clsx('animate-pulse rounded bg-slate-200/70', className)} />
 )
 
 export const EmptyState = ({
@@ -19,7 +19,7 @@ export const EmptyState = ({
   className?: string
 }) => (
   <div
-    className={cn(
+    className={clsx(
       'flex flex-col items-center justify-center gap-2 px-6 py-12 text-center',
       className,
     )}
@@ -42,7 +42,7 @@ export const ErrorState = ({
   className?: string
 }) => (
   <div
-    className={cn(
+    className={clsx(
       'flex flex-col items-center justify-center gap-3 px-6 py-12 text-center',
       className,
     )}

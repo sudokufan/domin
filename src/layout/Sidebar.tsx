@@ -11,7 +11,7 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
-import { cn } from "@/lib/cn";
+import { clsx } from "clsx";
 import { PingDot } from "@/components/PingDot";
 
 interface NavItem {
@@ -64,7 +64,7 @@ export const Sidebar = ({
 }) => (
   <>
     <div
-      className={cn(
+      className={clsx(
         "fixed inset-0 z-30 bg-slate-900/50 lg:hidden",
         isOpen ? "block" : "hidden",
       )}
@@ -73,7 +73,7 @@ export const Sidebar = ({
     />
 
     <aside
-      className={cn(
+      className={clsx(
         "fixed inset-y-0 left-0 z-40 flex h-full w-60 shrink-0 flex-col bg-sidebar text-slate-300 transition-transform duration-200 lg:static lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full",
       )}
@@ -111,7 +111,7 @@ export const Sidebar = ({
                     to={item.to}
                     onClick={onClose}
                     className={({ isActive }) =>
-                      cn(
+                      clsx(
                         "group flex items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
                         isActive
                           ? "bg-emerald-500/10 text-emerald-300"
@@ -122,8 +122,8 @@ export const Sidebar = ({
                     {({ isActive }) => (
                       <>
                         <item.icon
-                          className={cn(
-                            "h-[18px] w-[18px] shrink-0",
+                          className={clsx(
+                            "h-4.5 w-4.5 shrink-0",
                             isActive
                               ? "text-emerald-400"
                               : "text-slate-500 group-hover:text-slate-300",
@@ -161,7 +161,7 @@ export const Sidebar = ({
           aria-label="Sign out"
           className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-slate-200"
         >
-          <LogOut className="h-[18px] w-[18px]" />
+          <LogOut className="h-4.5 w-4.5" />
         </button>
       </div>
     </aside>

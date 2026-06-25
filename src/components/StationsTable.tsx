@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { Station } from '@/api/types'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 import { formatDuration } from '@/lib/format'
 import { StatusBadge } from './StatusBadge'
 import { UtilisationBar } from './UtilisationBar'
@@ -30,17 +30,17 @@ const SortableHeader = ({
 }) => {
   const isActive = sort.key === sortKey
   return (
-    <th className={cn('px-3 py-2.5 font-semibold', className)}>
+    <th className={clsx('px-3 py-2.5 font-semibold', className)}>
       <button
         type="button"
         onClick={() => onSort(sortKey)}
-        className={cn(
+        className={clsx(
           'inline-flex items-center gap-1 uppercase hover:text-slate-600',
           isActive && 'text-slate-700',
         )}
       >
         {label}
-        <span className={cn('text-[9px]', !isActive && 'opacity-0')}>
+        <span className={clsx('text-[9px]', !isActive && 'opacity-0')}>
           {sort.direction === 'asc' ? '▲' : '▼'}
         </span>
       </button>
@@ -62,7 +62,7 @@ const StationRow = ({
   <>
     <tr
       onClick={onToggle}
-      className={cn(
+      className={clsx(
         'cursor-pointer transition-colors hover:bg-slate-50',
         isExpanded && 'bg-slate-50',
       )}

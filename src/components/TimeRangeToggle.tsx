@@ -1,5 +1,5 @@
 import type { TimeRange } from '@/api/types'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 
 const RANGES: TimeRange[] = ['1h', '4h', '24h']
 
@@ -22,7 +22,7 @@ export const TimeRangeToggle = ({
         type="button"
         aria-pressed={value === range}
         onClick={() => onChange(range)}
-        className={cn(
+        className={clsx(
           'rounded-md px-3 py-1 text-xs font-medium transition-colors',
           value === range
             ? 'bg-slate-900 text-white'

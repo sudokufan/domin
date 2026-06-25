@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import { Sidebar } from './Sidebar'
-import { Topbar } from './Topbar'
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Sidebar } from "./Sidebar";
+import { Topbar } from "./Topbar";
 
-/** App shell: sidebar (static on desktop, drawer on mobile) + topbar + content. */
 export const AppLayout = () => {
-  const [isNavOpen, setIsNavOpen] = useState(false)
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -17,5 +16,5 @@ export const AppLayout = () => {
         </main>
       </div>
     </div>
-  )
-}
+  );
+};

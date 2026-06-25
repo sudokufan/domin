@@ -1,5 +1,5 @@
 import type { Station } from '@/api/types'
-import { cn } from '@/lib/cn'
+import { clsx } from 'clsx'
 import { statusStyle } from '@/lib/status'
 import { telemetryHeadline } from '@/lib/telemetry'
 
@@ -28,7 +28,7 @@ export const StationCard = ({
       type="button"
       onClick={() => onSelect?.(station.id)}
       aria-pressed={isSelected}
-      className={cn(
+      className={clsx(
         '@container/card flex h-full w-full flex-col rounded-md border border-l-4 bg-white p-3 text-left shadow-sm transition',
         'hover:shadow-md focus:ring-2 focus:ring-emerald-400/60 focus:outline-none',
         isSelected
@@ -42,13 +42,13 @@ export const StationCard = ({
           {station.id} · {station.stage}
         </span>
         <span
-          className={cn(
+          className={clsx(
             'inline-flex shrink-0 items-center gap-1.5 rounded-full px-1.5 py-0.5 text-xs font-medium',
             style.badge,
           )}
           title={style.label}
         >
-          <span className={cn('h-1.5 w-1.5 rounded-full', style.dot)} />
+          <span className={clsx('h-1.5 w-1.5 rounded-full', style.dot)} />
           <span className="hidden @[150px]/card:inline">{style.label}</span>
         </span>
       </div>

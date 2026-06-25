@@ -1,14 +1,11 @@
-import { useLocation } from 'react-router-dom'
-import { Bell, ChevronRight, Menu } from 'lucide-react'
-import { useNow } from '@/hooks/useNow'
-import { PingDot } from '@/components/PingDot'
-import { formatClock, formatShortDate } from '@/lib/format'
-import { routeLabel } from './routeMeta'
+import { useLocation } from "react-router-dom";
+import { Bell, ChevronRight, Menu } from "lucide-react";
+import { LiveClock } from "@/components/LiveClock";
+import { routeLabel } from "./routeMeta";
 
 export const Topbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
-  const { pathname } = useLocation()
-  const now = useNow()
-  const label = routeLabel(pathname)
+  const { pathname } = useLocation();
+  const label = routeLabel(pathname);
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 sm:px-6">
@@ -17,7 +14,7 @@ export const Topbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
           type="button"
           onClick={onMenuClick}
           aria-label="Open navigation"
-          className="-ml-1 rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 lg:hidden"
+          className="rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 lg:hidden"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -35,25 +32,16 @@ export const Topbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
 
       {/* Live clock + notifications */}
       <div className="flex items-center gap-2 sm:gap-4">
-        <div className="flex items-center gap-2 rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 sm:px-3">
-          <PingDot color="bg-emerald-500" pingColor="bg-emerald-400" title="Live data" />
-          <span className="hidden text-slate-700 sm:inline">Live</span>
-          <span className="hidden text-slate-300 sm:inline">·</span>
-          <span className="tabular-nums">{formatClock(now)}</span>
-          <span className="hidden text-slate-400 md:inline">
-            {formatShortDate(now)}
-          </span>
-        </div>
-
+        <LiveClock />
         <button
           type="button"
           aria-label="Notifications"
           className="relative rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
         >
-          <Bell className="h-[18px] w-[18px]" />
+          <Bell className="h-4.5 w-4.5" />
           <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
         </button>
       </div>
     </header>
-  )
-}
+  );
+};
