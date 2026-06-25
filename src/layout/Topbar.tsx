@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { Bell, ChevronRight, Menu } from "lucide-react";
 import { LiveClock } from "@/components/LiveClock";
-import { routeLabel } from "./routeMeta";
+import { routeLabel } from "./routes";
 
 export const Topbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const { pathname } = useLocation();
