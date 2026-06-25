@@ -4,7 +4,7 @@
  * These mirror the JSON contract the REST API (see src/designs/diagram.png)
  * would serve from the PostgreSQL `stations`, `telemetry`, `parts` and
  * `events` tables. The front-end only ever depends on these types, never on
- * the simulation that currently produces them.
+ * the mock dataset that currently produces them.
  */
 
 export type StationStatus = 'running' | 'idle' | 'maintenance' | 'faulted'

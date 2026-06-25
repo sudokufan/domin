@@ -8,6 +8,10 @@ and fault history over time.
 Built with React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query and
 Recharts.
 
+> **New to the codebase?** Read **[WALKTHROUGH.md](./WALKTHROUGH.md)** — a
+> guided, file-by-file tour that follows a piece of data from the mock store all
+> the way to the screen.
+
 ## Running it
 
 ```bash
@@ -17,15 +21,16 @@ npm run build    # type-check + production build
 npm run lint
 ```
 
-The app ships with an **in-browser simulation** of the production line, so there
-is no backend to run — it works out of the box and the data evolves live.
+The app ships with an **in-browser mock** of the production line, so there is no
+backend to run — it works out of the box, rendering a static snapshot of the
+line.
 
 ## The three views
 
 | View | What it answers |
 | --- | --- |
-| **Stations** | Status of every machine at a glance — searchable, filterable, sortable table with 24h utilisation; expand a row for live telemetry, parts and events. |
-| **Floor map** | Where things physically are. A shop-floor plan with status-coloured machine cards; select one for a live detail panel. |
+| **Stations** | Status of every machine at a glance — searchable, filterable, sortable table with 24h utilisation; expand a row for telemetry, parts and events. |
+| **Floor map** | Where things physically are. A shop-floor plan with status-coloured machine cards; select one for a detail panel. |
 | **Dashboard** | Is the line healthy? Headline KPIs (utilisation, stations running, active faults, throughput vs target), a utilisation trend with a target line, and a 24h per-machine status timeline. |
 
 ## Architecture
@@ -40,8 +45,8 @@ src/
     endpoints.ts    typed wrappers: getStations(), getDashboard(range), …
     mock/           in-browser stand-in for the PostgreSQL + REST backend
       seed.ts         the six machines + initial state
-      simulation.ts   ticking state, 24h history, utilisation aggregates
-      handlers.ts     resolves request paths against the simulation
+      mockData.ts     static dataset: 6 machines, 24h history, aggregates
+      handlers.ts     resolves request paths against the mock data
   hooks/        usePolling primitive + useStations / useStation / useDashboard
   layout/       AppLayout, Sidebar (drawer on mobile), Topbar
   components/   reusable UI — composed into pages:
@@ -58,24 +63,26 @@ Pages stay thin: they own state (filters, selection, range) and compose
 components; the components are presentational and reusable.
 
 **Data flows one way:** `pages → hooks → endpoints → client → (mock | real API)`.
-Components never construct request paths or touch the simulation; they only
+Components never construct request paths or touch the mock; they only
 depend on the types in `api/types.ts`.
 
 ### Swapping the mock for a real API
 
 `src/api/client.ts` is the only place that knows where data comes from. Set
 `VITE_API_BASE_URL` and every request goes to the real REST API over `fetch()`
-instead of the simulation — no other code changes. The `mock/` folder can then
+instead of the mock — no other code changes. The `mock/` folder can then
 be deleted.
 
 ## Key decisions & trade-offs
 
-- **In-browser simulation behind the API boundary.** Rather than static
-  fixtures, the mock *ticks*: telemetry drifts, statuses transition (logging
-  events), parts move through queues, and throughput accrues. It also
-  synthesises 24h of history on load so the timeline and utilisation chart have
-  depth immediately. This exercises the real-time aspects of the brief while
-  keeping the front-end honest about its data contract.
+- **Static in-browser mock behind the API boundary.** `src/api/mock/mockData.ts`
+  builds one believable snapshot at load — the 6 machines plus ~24h of
+  synthesised history — anchored to a single frozen timestamp, then never
+  changes. Reads are deterministic, so repeated polls return identical data and
+  the UI renders once and stays put. It lives entirely behind the API boundary,
+  so the front-end depends only on the data contract (`api/types.ts`), never on
+  the mock. (An earlier version was a live ticking simulation; that was removed
+  in favour of stable data.)
 
 - **Machine-specific telemetry as a discriminated union.** Telemetry volume
   varies wildly per station (the honing machine reports state only; the test rig
@@ -122,7 +129,7 @@ icon-only buttons and the progress bars, and status conveyed by **text + colour*
 - Code-split Recharts (it dominates the bundle) and lazy-load routes.
 - WebSocket/SSE transport for true push instead of polling (the `client.ts` seam
   makes this a localised change).
-- Tests: unit-test the aggregation logic in `simulation.ts` and the formatting
+- Tests: unit-test the aggregation logic in `mockData.ts` and the formatting
   helpers; component tests for the table filtering/sorting.
 - Persist filter/range state in the URL so views are shareable.
 - Build out the Production/Account areas currently stubbed in the nav.

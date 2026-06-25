@@ -5,7 +5,7 @@ import { ApiError, handleRequest } from './mock/handlers'
  *
  * This is the one place the front-end is coupled to the data source. When
  * `VITE_API_BASE_URL` is set, requests go to the real API over fetch();
- * otherwise they resolve against the in-browser simulation (mock/). Pointing
+ * otherwise they resolve against the static in-browser mock (mock/). Pointing
  * the app at a real backend is therefore a config change, not a code change.
  */
 const BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined

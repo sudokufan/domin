@@ -1,6 +1,6 @@
 import type { DashboardData, TimeRange } from '@/api/types'
 import { THROUGHPUT_TARGET, UTILISATION_TARGET_PCT } from './seed'
-import { simulation } from './simulation'
+import * as mockData from './mockData'
 
 export class ApiError extends Error {
   status: number
@@ -12,36 +12,36 @@ export class ApiError extends Error {
 }
 
 const buildDashboard = (range: TimeRange): DashboardData => {
-  const stations = simulation.getStations()
+  const stations = mockData.getStations()
   const running = stations.filter((station) => station.status === 'running').length
   const faults = stations
     .filter((station) => station.status === 'faulted')
     .map((station) => ({ stationId: station.id, name: station.name }))
 
-  const meanUtilisation = simulation.meanUtilisation(range)
-  const previousUtilisation = simulation.meanUtilisationPrevious(range)
+  const meanUtilisation = mockData.meanUtilisation(range)
+  const previousUtilisation = mockData.meanUtilisationPrevious(range)
 
   return {
     range,
-    generatedAt: new Date().toISOString(),
+    generatedAt: mockData.getGeneratedAt(),
     factoryUtilisationPct: Math.round(meanUtilisation),
     factoryUtilisationDeltaPp:
       Math.round((meanUtilisation - previousUtilisation) * 10) / 10,
     utilisationTargetPct: UTILISATION_TARGET_PCT,
-    utilisationSeries: simulation.getUtilisationSeries(range),
+    utilisationSeries: mockData.getUtilisationSeries(range),
     stationsRunning: running,
     stationsTotal: stations.length,
     activeFaults: faults,
-    throughputToday: simulation.getThroughputToday(),
+    throughputToday: mockData.getThroughputToday(),
     throughputTarget: THROUGHPUT_TARGET,
-    timeline: simulation.getHistory(range),
+    timeline: mockData.getHistory(range),
   }
 }
 
 /**
- * Resolves a request against the running simulation — the in-browser
- * stand-in for the REST API in src/designs/diagram.png. Returns plain JSON
- * exactly as the real `/stations`, `/dashboard`, … endpoints would.
+ * Resolves a request against the static mock dataset — the in-browser stand-in
+ * for the REST API in src/designs/diagram.png. Returns plain JSON exactly as
+ * the real `/stations`, `/dashboard`, … endpoints would.
  */
 export const handleRequest = <Result,>(
   path: string,
@@ -51,13 +51,13 @@ export const handleRequest = <Result,>(
 
   // GET /stations/:id/events
   let match = path.match(/^\/stations\/([^/]+)\/events$/)
-  if (match) return simulation.getEvents(match[1]) as Result
+  if (match) return mockData.getEvents(match[1]) as Result
 
   // GET /stations/:id/history
   match = path.match(/^\/stations\/([^/]+)\/history$/)
   if (match) {
     const stationId = match[1]
-    const history = simulation
+    const history = mockData
       .getHistory(range)
       .find((entry) => entry.stationId === stationId)
     return (history ?? { stationId, segments: [] }) as Result
@@ -66,13 +66,13 @@ export const handleRequest = <Result,>(
   // GET /stations/:id
   match = path.match(/^\/stations\/([^/]+)$/)
   if (match) {
-    const station = simulation.getStation(match[1])
+    const station = mockData.getStation(match[1])
     if (!station) throw new ApiError(404, `Station ${match[1]} not found`)
     return station as Result
   }
 
   // GET /stations
-  if (path === '/stations') return simulation.getStations() as Result
+  if (path === '/stations') return mockData.getStations() as Result
 
   // GET /dashboard
   if (path === '/dashboard') return buildDashboard(range) as Result
