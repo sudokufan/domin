@@ -129,7 +129,7 @@ export const StationsTable = ({
   now: number;
 }) => (
   <div className="overflow-x-auto">
-    <table className="w-full min-w-[480px] text-sm">
+    <table className="w-full min-w-120 text-sm">
       <thead>
         <tr className="border-b border-slate-200 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
           <SortableHeader

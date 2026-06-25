@@ -265,7 +265,11 @@ const runningFractionAt = (time: number): number => {
 };
 
 /** Fraction of the [from,to] window a station spent running, 0..1. */
-const utilisationFor = (stationId: string, from: number, to: number): number => {
+const utilisationFor = (
+  stationId: string,
+  from: number,
+  to: number,
+): number => {
   const segments = historyByStation.get(stationId);
   if (!segments) return 0;
   let runningMs = 0;
