@@ -39,10 +39,11 @@ The structure follows the reference diagram in `src/designs/diagram.png`:
 
 ```
 src/
-  api/          the data contract + the static source behind it
+  api/          the "API client" + the data behind it
     types.ts        domain types (Station, Telemetry union, events, dashboard)
-    mockData.ts     static dataset: 6 machines, 24h history, dashboard aggregates
-    endpoints.ts    the `api`: async getStations() / getStation() / getDashboard()…
+    mockData.ts     static dataset that simulates the API's JSON responses
+    client.ts       HTTP transport (real fetch) + API_BASE_URL from the env
+    endpoints.ts    the `api`: per endpoint, real fetch OR mock (one switch)
   hooks/        usePolling primitive + useGetStations / useGetStation / useGetDashboard
   layout/       Layout, Sidebar (drawer on mobile), Topbar
   components/   reusable UI — composed into pages:
@@ -58,16 +59,31 @@ src/
 Pages stay thin: they own state (filters, selection, range) and compose
 components; the components are presentational and reusable.
 
-**Data flows one way:** `pages → hooks → endpoints → mockData`.
+**Data flows one way:** `pages → hooks → endpoints → (mockData | client → real API)`.
 Components never touch the data source; they only depend on the types in
 `api/types.ts`.
 
 ### Swapping the mock for a real API
 
-`src/api/endpoints.ts` is the only place that knows where data comes from — a
-handful of `async` functions that today resolve from `mockData`. Change their
-bodies to `fetch()` the real endpoints and the rest of the app is unchanged;
-`mockData.ts` can then be deleted.
+`src/api/endpoints.ts` is the **API client** from the diagram, and the only
+place that knows where data comes from. Each method is one REST endpoint that
+today resolves from `mockData.ts` — but it already contains the real call too,
+behind one switch:
+
+```ts
+getStations: async () =>
+  API_BASE_URL ? apiGet("/stations") : mockData.getStations();
+```
+
+So pointing the app at the real backend is just **redirecting where the API
+points**: set `VITE_API_BASE_URL` (in a `.env` file — see `.env.example`) and
+every call goes through `client.ts`'s `apiGet` to that server over HTTPS/JSON
+instead. The hooks, pages and components don't change at all; once live,
+`mockData.ts` can be deleted.
+
+> **Env vars** are read by Vite from a `.env` file at the project root (or the
+> shell), exposed on `import.meta.env`. There's no `.env` by default, so the app
+> uses the mock; copy `.env.example` → `.env` and set the URL to go live.
 
 ## Key decisions & trade-offs
 
