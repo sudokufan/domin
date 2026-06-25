@@ -1,28 +1,28 @@
-import { useState } from 'react'
-import type { TimeRange } from '@/api/types'
-import { useDashboard } from '@/hooks/useDashboard'
-import { useStations } from '@/hooks/useStations'
-import { PageHeader } from '@/components/PageHeader'
-import { Card, CardHeader } from '@/components/Card'
-import { DashboardKpis } from '@/components/DashboardKpis'
-import { UtilisationChart } from '@/components/UtilisationChart'
-import { StatusTimeline } from '@/components/StatusTimeline'
-import { StatusLegend } from '@/components/StatusLegend'
-import { StationDetail } from '@/components/StationDetail'
-import { TimeRangeToggle } from '@/components/TimeRangeToggle'
-import { ErrorState, Skeleton } from '@/components/states'
+import { useState } from "react";
+import type { TimeRange } from "@/api/types";
+import { useDashboard } from "@/hooks/useDashboard";
+import { useStations } from "@/hooks/useStations";
+import { PageHeader } from "@/components/PageHeader";
+import { Card, CardHeader } from "@/components/Card";
+import { KpiCardContainer } from "@/components/KpiCardContainer";
+import { UtilisationChart } from "@/components/UtilisationChart";
+import { StatusTimeline } from "@/components/StatusTimeline";
+import { StatusLegend } from "@/components/StatusLegend";
+import { StationDetail } from "@/components/StationDetail";
+import { TimeRangeToggle } from "@/components/TimeRangeToggle";
+import { ErrorState, Skeleton } from "@/components/states";
 
 const SAMPLE_LABEL: Record<TimeRange, string> = {
-  '1h': '2 minutes',
-  '4h': '10 minutes',
-  '24h': '30 minutes',
-}
+  "1h": "2 minutes",
+  "4h": "10 minutes",
+  "24h": "30 minutes",
+};
 
 const RANGE_LABEL: Record<TimeRange, string> = {
-  '1h': 'last hour',
-  '4h': 'last 4 hours',
-  '24h': 'last 24 hours',
-}
+  "1h": "last hour",
+  "4h": "last 4 hours",
+  "24h": "last 24 hours",
+};
 
 const DashboardSkeleton = () => (
   <div className="space-y-4">
@@ -39,13 +39,13 @@ const DashboardSkeleton = () => (
       <Skeleton className="h-64 w-full" />
     </Card>
   </div>
-)
+);
 
 export const DashboardPage = () => {
-  const [range, setRange] = useState<TimeRange>('24h')
-  const { data, error, refetch } = useDashboard(range)
-  const { data: stations } = useStations()
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [range, setRange] = useState<TimeRange>("24h");
+  const { data, error, refetch } = useDashboard(range);
+  const { data: stations } = useStations();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (
     <div className="px-4 py-5 sm:px-6">
@@ -63,8 +63,7 @@ export const DashboardPage = () => {
         <DashboardSkeleton />
       ) : (
         <div className="space-y-4">
-          <DashboardKpis data={data} range={range} />
-
+          <KpiCardContainer data={data} range={range} />
           {/* Utilisation chart */}
           <Card>
             <CardHeader
@@ -92,7 +91,7 @@ export const DashboardPage = () => {
               }
             />
             <div className="overflow-x-auto px-5 pt-3 pb-5">
-              <div className="min-w-[480px]">
+              <div className="min-w-120">
                 <StatusTimeline
                   history={data.timeline}
                   stations={stations ?? []}
@@ -118,5 +117,5 @@ export const DashboardPage = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};

@@ -1,7 +1,7 @@
-import { Fragment } from 'react'
-import type { Station } from '@/api/types'
-import { StationCard } from './StationCard'
-import { FlowConnector } from './FlowConnector'
+import { Fragment } from "react";
+import type { Station } from "@/api/types";
+import { StationCard } from "./StationCard";
+import { FlowConnector } from "./FlowConnector";
 
 /**
  * The production line laid out in process order (Print → Turn → Hone → Test →
@@ -14,13 +14,13 @@ export const ProcessFlow = ({
   selectedId,
   onSelect,
 }: {
-  stations: Station[]
-  selectedId: string | null
-  onSelect: (id: string) => void
+  stations: Station[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
 }) => {
   const ordered = [...stations].sort((first, second) =>
     first.id.localeCompare(second.id),
-  )
+  );
 
   return (
     <div className="flex flex-col lg:flex-row lg:items-stretch">
@@ -37,5 +37,5 @@ export const ProcessFlow = ({
         </Fragment>
       ))}
     </div>
-  )
-}
+  );
+};

@@ -1,23 +1,23 @@
-import type { ReactNode } from 'react'
-import { clsx } from 'clsx'
+import type { ReactNode } from "react";
+import { clsx } from "clsx";
 
 /** White surface used for every panel/card in the UI. */
 export const Card = ({
   children,
   className,
 }: {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }) => (
   <div
     className={clsx(
-      'rounded-xl border border-slate-200 bg-white shadow-sm',
+      "rounded-xl border border-slate-200 bg-white shadow-sm",
       className,
     )}
   >
     {children}
   </div>
-)
+);
 
 export const CardHeader = ({
   title,
@@ -25,14 +25,14 @@ export const CardHeader = ({
   action,
   className,
 }: {
-  title: ReactNode
-  subtitle?: ReactNode
-  action?: ReactNode
-  className?: string
+  title: ReactNode;
+  subtitle?: ReactNode;
+  action?: ReactNode;
+  className?: string;
 }) => (
   <div
     className={clsx(
-      'flex flex-wrap items-start justify-between gap-3 px-5 pt-4',
+      "flex flex-wrap items-start justify-between gap-3 px-5 pt-4",
       className,
     )}
   >
@@ -42,4 +42,4 @@ export const CardHeader = ({
     </div>
     {action}
   </div>
-)
+);

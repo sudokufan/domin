@@ -1,18 +1,18 @@
-import { apiGet } from './client'
+import { apiGet } from "./client";
 import type {
   DashboardData,
   Station,
   StationHistory,
   StatusEvent,
   TimeRange,
-} from './types'
+} from "./types";
 
 /**
  * Typed wrappers around the REST endpoints. Hooks call these; nothing else in
  * the app constructs request paths.
  */
 export const api = {
-  getStations: () => apiGet<Station[]>('/stations'),
+  getStations: () => apiGet<Station[]>("/stations"),
 
   getStation: (id: string) => apiGet<Station>(`/stations/${id}`),
 
@@ -23,5 +23,5 @@ export const api = {
     apiGet<StationHistory>(`/stations/${id}/history`, { range }),
 
   getDashboard: (range: TimeRange) =>
-    apiGet<DashboardData>('/dashboard', { range }),
-}
+    apiGet<DashboardData>("/dashboard", { range }),
+};

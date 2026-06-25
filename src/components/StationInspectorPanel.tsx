@@ -1,7 +1,7 @@
-import { MousePointerClick } from 'lucide-react'
-import { Card } from './Card'
-import { StationDetail } from './StationDetail'
-import { EmptyState } from './states'
+import { MousePointerClick } from "lucide-react";
+import { Card } from "./Card";
+import { StationDetail } from "./StationDetail";
+import { EmptyState } from "./states";
 
 /**
  * Right-hand panel on the floor map: shows the selected station's live detail,
@@ -12,9 +12,9 @@ export const StationInspectorPanel = ({
   onClose,
   className,
 }: {
-  stationId: string | null
-  onClose: () => void
-  className?: string
+  stationId: string | null;
+  onClose: () => void;
+  className?: string;
 }) => (
   <Card className={className}>
     {stationId ? (
@@ -28,4 +28,4 @@ export const StationInspectorPanel = ({
       />
     )}
   </Card>
-)
+);

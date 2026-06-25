@@ -1,27 +1,29 @@
-import type { DashboardData, TimeRange } from '@/api/types'
-import { KpiCard } from './KpiCard'
-import { Sparkline } from './Sparkline'
+import type { DashboardData, TimeRange } from "@/api/types";
+import { KpiCard } from "./KpiCard";
+import { Sparkline } from "./Sparkline";
 
 /** The four headline KPIs at the top of the dashboard. */
-export const DashboardKpis = ({
+export const KpiCardContainer = ({
   data,
   range,
 }: {
-  data: DashboardData
-  range: TimeRange
+  data: DashboardData;
+  range: TimeRange;
 }) => {
   const throughputPct = Math.round(
     (data.throughputToday / data.throughputTarget) * 100,
-  )
+  );
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <KpiCard
         label={`Factory utilisation · ${range}`}
         value={`${data.factoryUtilisationPct}%`}
-        delta={{ value: data.factoryUtilisationDeltaPp, unit: ' pp' }}
+        delta={{ value: data.factoryUtilisationDeltaPp, unit: " pp" }}
       >
-        <Sparkline data={data.utilisationSeries.map((sample) => sample.utilisationPct)} />
+        <Sparkline
+          data={data.utilisationSeries.map((sample) => sample.utilisationPct)}
+        />
       </KpiCard>
 
       <KpiCard
@@ -33,11 +35,11 @@ export const DashboardKpis = ({
       <KpiCard
         label="Active faults"
         value={data.activeFaults.length}
-        accent={data.activeFaults.length > 0 ? '#ef4444' : undefined}
+        accent={data.activeFaults.length > 0 ? "#ef4444" : undefined}
         footer={
           data.activeFaults.length > 0
-            ? data.activeFaults.map((fault) => fault.stationId).join(', ')
-            : 'No active faults'
+            ? data.activeFaults.map((fault) => fault.stationId).join(", ")
+            : "No active faults"
         }
       />
 
@@ -47,5 +49,5 @@ export const DashboardKpis = ({
         footer={`Target ${data.throughputTarget} · ${throughputPct}%`}
       />
     </div>
-  )
-}
+  );
+};

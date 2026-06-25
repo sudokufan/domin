@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import type { StationStatus } from '@/api/types'
-import { statusStyle } from '@/lib/status'
+import { ChevronDown, ChevronRight } from "lucide-react";
+import type { StationStatus } from "@/api/types";
+import { statusStyle } from "@/lib/status";
 
 /**
  * Directional link drawn between two stations to show material flow through
@@ -9,7 +9,7 @@ import { statusStyle } from '@/lib/status'
  * stacked (mobile) and right when it's laid out as a row (desktop).
  */
 export const FlowConnector = ({ status }: { status: StationStatus }) => {
-  const color = statusStyle(status).hex
+  const color = statusStyle(status).hex;
   return (
     <div
       className="flex shrink-0 flex-col items-center justify-center lg:flex-row"
@@ -22,5 +22,5 @@ export const FlowConnector = ({ status }: { status: StationStatus }) => {
       <ChevronDown className="h-3.5 w-3.5 lg:hidden" style={{ color }} />
       <ChevronRight className="hidden h-3.5 w-3.5 lg:block" style={{ color }} />
     </div>
-  )
-}
+  );
+};

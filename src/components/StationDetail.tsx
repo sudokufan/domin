@@ -1,20 +1,20 @@
-import type { ReactNode } from 'react'
-import { X } from 'lucide-react'
-import { useStation, useStationEvents } from '@/hooks/useStation'
-import { useNow } from '@/hooks/useNow'
-import { statusStyle } from '@/lib/status'
-import { formatDuration, formatRelative } from '@/lib/format'
-import { telemetryRows } from '@/lib/telemetry'
-import { StatusBadge } from './StatusBadge'
-import { UtilisationBar } from './UtilisationBar'
-import { Skeleton } from './states'
+import type { ReactNode } from "react";
+import { X } from "lucide-react";
+import { useStation, useStationEvents } from "@/hooks/useStation";
+import { useNow } from "@/hooks/useNow";
+import { statusStyle } from "@/lib/status";
+import { formatDuration, formatRelative } from "@/lib/format";
+import { telemetryRows } from "@/lib/telemetry";
+import { StatusBadge } from "./StatusBadge";
+import { UtilisationBar } from "./UtilisationBar";
+import { Skeleton } from "./states";
 
 const Section = ({
   title,
   children,
 }: {
-  title: string
-  children: ReactNode
+  title: string;
+  children: ReactNode;
 }) => (
   <section>
     <h4 className="mb-2 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
@@ -22,7 +22,7 @@ const Section = ({
     </h4>
     {children}
   </section>
-)
+);
 
 const Metric = ({ label, value }: { label: string; value: string }) => (
   <div>
@@ -33,7 +33,7 @@ const Metric = ({ label, value }: { label: string; value: string }) => (
       {value}
     </p>
   </div>
-)
+);
 
 /**
  * Live detail for one station: status, time-in-state, telemetry read-outs,
@@ -44,12 +44,12 @@ export const StationDetail = ({
   stationId,
   onClose,
 }: {
-  stationId: string
-  onClose?: () => void
+  stationId: string;
+  onClose?: () => void;
 }) => {
-  const { data: station, isLoading } = useStation(stationId)
-  const { data: events } = useStationEvents(stationId)
-  const now = useNow()
+  const { data: station, isLoading } = useStation(stationId);
+  const { data: events } = useStationEvents(stationId);
+  const now = useNow();
 
   if (isLoading || !station) {
     return (
@@ -58,10 +58,10 @@ export const StationDetail = ({
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-32 w-full" />
       </div>
-    )
+    );
   }
 
-  const readouts = telemetryRows(station.telemetry)
+  const readouts = telemetryRows(station.telemetry);
 
   return (
     <div className="flex h-full flex-col">
@@ -114,7 +114,9 @@ export const StationDetail = ({
             <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
               {readouts.map((readout) => (
                 <div key={readout.label} className="flex flex-col">
-                  <dt className="text-[11px] text-slate-400">{readout.label}</dt>
+                  <dt className="text-[11px] text-slate-400">
+                    {readout.label}
+                  </dt>
                   <dd className="text-sm font-medium text-slate-800 tabular-nums">
                     {readout.value}
                   </dd>
@@ -139,7 +141,7 @@ export const StationDetail = ({
           </div>
           {station.partsQueued.length > 0 && (
             <p className="mt-2 truncate text-xs text-slate-400">
-              Next: {station.partsQueued.slice(0, 3).join(', ')}
+              Next: {station.partsQueued.slice(0, 3).join(", ")}
             </p>
           )}
         </Section>
@@ -169,5 +171,5 @@ export const StationDetail = ({
         </Section>
       </div>
     </div>
-  )
-}
+  );
+};

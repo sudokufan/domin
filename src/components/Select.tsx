@@ -1,9 +1,9 @@
-import { ChevronDown } from 'lucide-react'
-import { clsx } from 'clsx'
+import { ChevronDown } from "lucide-react";
+import { clsx } from "clsx";
 
 export interface SelectOption {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 /** Lightweight styled native select used for the table filters. */
@@ -14,13 +14,13 @@ export const Select = ({
   ariaLabel,
   className,
 }: {
-  value: string
-  options: SelectOption[]
-  onChange: (value: string) => void
-  ariaLabel: string
-  className?: string
+  value: string;
+  options: SelectOption[];
+  onChange: (value: string) => void;
+  ariaLabel: string;
+  className?: string;
 }) => (
-  <div className={clsx('relative', className)}>
+  <div className={clsx("relative", className)}>
     <select
       aria-label={ariaLabel}
       value={value}
@@ -35,4 +35,4 @@ export const Select = ({
     </select>
     <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2 text-slate-400" />
   </div>
-)
+);

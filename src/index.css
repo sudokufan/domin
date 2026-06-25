@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /*
  * Design tokens for the DOMIN factory-status UI.
@@ -8,7 +8,7 @@
  */
 @theme {
   --font-sans:
-    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
 
   --color-canvas: #f6f7f9;

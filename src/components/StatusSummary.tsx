@@ -1,7 +1,7 @@
-import type { Station, StationStatus } from '@/api/types'
-import { STATION_STATUSES } from '@/api/types'
-import { Card } from './Card'
-import { statusStyle } from '@/lib/status'
+import type { Station, StationStatus } from "@/api/types";
+import { STATION_STATUSES } from "@/api/types";
+import { Card } from "./Card";
+import { statusStyle } from "@/lib/status";
 
 /** The four status-count tiles shown above the stations table. */
 export const StatusSummary = ({ stations }: { stations: Station[] }) => {
@@ -9,16 +9,16 @@ export const StatusSummary = ({ stations }: { stations: Station[] }) => {
     (totals, status) => {
       totals[status] = stations.filter(
         (station) => station.status === status,
-      ).length
-      return totals
+      ).length;
+      return totals;
     },
     {} as Record<StationStatus, number>,
-  )
+  );
 
   return (
     <Card className="grid grid-cols-2 divide-slate-200 sm:grid-cols-4 sm:divide-x">
       {STATION_STATUSES.map((status) => {
-        const style = statusStyle(status)
+        const style = statusStyle(status);
         return (
           <div key={status} className="flex items-start justify-between p-4">
             <div>
@@ -34,8 +34,8 @@ export const StatusSummary = ({ stations }: { stations: Station[] }) => {
               style={{ backgroundColor: style.hex }}
             />
           </div>
-        )
+        );
       })}
     </Card>
-  )
-}
+  );
+};

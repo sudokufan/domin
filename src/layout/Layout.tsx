@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 
-export const AppLayout = () => {
+export const Layout = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   return (

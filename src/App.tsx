@@ -1,14 +1,14 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { AppLayout } from '@/layout/AppLayout'
-import { StationsPage } from '@/pages/StationsPage'
-import { FloorMapPage } from '@/pages/FloorMapPage'
-import { DashboardPage } from '@/pages/DashboardPage'
-import { StubPage } from '@/pages/StubPage'
+import { Navigate, Route, Routes } from "react-router-dom";
+import { Layout } from "@/layout/Layout";
+import { StationsPage } from "@/pages/StationsPage";
+import { FloorMapPage } from "@/pages/FloorMapPage";
+import { DashboardPage } from "@/pages/DashboardPage";
+import { StubPage } from "@/pages/StubPage";
 
 const App = () => {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
+      <Route element={<Layout />}>
         <Route index element={<Navigate to="/stations" replace />} />
         <Route path="stations" element={<StationsPage />} />
         <Route path="floor-map" element={<FloorMapPage />} />
@@ -25,7 +25,7 @@ const App = () => {
         <Route path="*" element={<Navigate to="/stations" replace />} />
       </Route>
     </Routes>
-  )
-}
+  );
+};
 
-export default App
+export default App;

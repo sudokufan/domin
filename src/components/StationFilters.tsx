@@ -1,5 +1,5 @@
-import { Download, Search } from 'lucide-react'
-import { Select, type SelectOption } from './Select'
+import { Download, Search } from "lucide-react";
+import { Select, type SelectOption } from "./Select";
 
 /**
  * Search + stage/status filters and the export action for the stations table.
@@ -18,17 +18,17 @@ export const StationFilters = ({
   totalCount,
   onExport,
 }: {
-  query: string
-  onQueryChange: (value: string) => void
-  stage: string
-  onStageChange: (value: string) => void
-  status: string
-  onStatusChange: (value: string) => void
-  stageOptions: SelectOption[]
-  statusOptions: SelectOption[]
-  resultCount: number
-  totalCount: number
-  onExport: () => void
+  query: string;
+  onQueryChange: (value: string) => void;
+  stage: string;
+  onStageChange: (value: string) => void;
+  status: string;
+  onStatusChange: (value: string) => void;
+  stageOptions: SelectOption[];
+  statusOptions: SelectOption[];
+  resultCount: number;
+  totalCount: number;
+  onExport: () => void;
 }) => (
   <div className="flex flex-wrap items-center gap-3">
     <div className="relative min-w-48 flex-1">
@@ -71,4 +71,4 @@ export const StationFilters = ({
       </button>
     </div>
   </div>
-)
+);

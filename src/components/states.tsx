@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react'
-import { AlertCircle, RefreshCw } from 'lucide-react'
-import { clsx } from 'clsx'
+import type { ReactNode } from "react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { clsx } from "clsx";
 
 /** Grey shimmer block for loading placeholders. */
 export const Skeleton = ({ className }: { className?: string }) => (
-  <div className={clsx('animate-pulse rounded bg-slate-200/70', className)} />
-)
+  <div className={clsx("animate-pulse rounded bg-slate-200/70", className)} />
+);
 
 export const EmptyState = ({
   icon,
@@ -13,14 +13,14 @@ export const EmptyState = ({
   description,
   className,
 }: {
-  icon?: ReactNode
-  title: string
-  description?: string
-  className?: string
+  icon?: ReactNode;
+  title: string;
+  description?: string;
+  className?: string;
 }) => (
   <div
     className={clsx(
-      'flex flex-col items-center justify-center gap-2 px-6 py-12 text-center',
+      "flex flex-col items-center justify-center gap-2 px-6 py-12 text-center",
       className,
     )}
   >
@@ -30,20 +30,20 @@ export const EmptyState = ({
       <p className="max-w-xs text-xs text-slate-400">{description}</p>
     )}
   </div>
-)
+);
 
 export const ErrorState = ({
   message,
   onRetry,
   className,
 }: {
-  message?: string
-  onRetry?: () => void
-  className?: string
+  message?: string;
+  onRetry?: () => void;
+  className?: string;
 }) => (
   <div
     className={clsx(
-      'flex flex-col items-center justify-center gap-3 px-6 py-12 text-center',
+      "flex flex-col items-center justify-center gap-3 px-6 py-12 text-center",
       className,
     )}
     role="alert"
@@ -52,7 +52,7 @@ export const ErrorState = ({
     <div>
       <p className="text-sm font-medium text-slate-700">Couldn’t load data</p>
       <p className="mt-0.5 text-xs text-slate-400">
-        {message ?? 'The factory API did not respond.'}
+        {message ?? "The factory API did not respond."}
       </p>
     </div>
     {onRetry && (
@@ -66,4 +66,4 @@ export const ErrorState = ({
       </button>
     )}
   </div>
-)
+);

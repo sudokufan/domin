@@ -1,5 +1,5 @@
-import { Construction } from 'lucide-react'
-import { PageHeader } from '@/components/PageHeader'
+import { Construction } from "lucide-react";
+import { PageHeader } from "@/components/PageHeader";
 
 /**
  * Placeholder for the Production/Account areas. These are intentionally out of
@@ -20,4 +20,4 @@ export const StubPage = ({ title }: { title: string }) => (
       </p>
     </div>
   </div>
-)
+);

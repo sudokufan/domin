@@ -2,7 +2,7 @@ import {
   useQuery,
   type QueryKey,
   type UseQueryResult,
-} from '@tanstack/react-query'
+} from "@tanstack/react-query";
 
 /**
  * Project convention for polling a REST endpoint (the `usePolling` node in
@@ -15,16 +15,16 @@ import {
  * polling behaviour is defined in exactly one place.
  */
 export interface PollingResult<Data> {
-  data: Data | undefined
-  error: Error | null
-  isLoading: boolean
-  isFetching: boolean
+  data: Data | undefined;
+  error: Error | null;
+  isLoading: boolean;
+  isFetching: boolean;
   /** Epoch ms of the last successful fetch, or 0 if none yet. */
-  lastUpdated: number
-  refetch: UseQueryResult<Data>['refetch']
+  lastUpdated: number;
+  refetch: UseQueryResult<Data>["refetch"];
 }
 
-export const usePolling = <Data,>(
+export const usePolling = <Data>(
   key: QueryKey,
   fetcher: () => Promise<Data>,
   intervalMs: number,
@@ -38,7 +38,7 @@ export const usePolling = <Data,>(
     // Show last-known data while refetching instead of falling back to a
     // loading state on every poll.
     placeholderData: (previous) => previous,
-  })
+  });
 
   return {
     data: query.data,
@@ -47,12 +47,12 @@ export const usePolling = <Data,>(
     isFetching: query.isFetching,
     lastUpdated: query.dataUpdatedAt,
     refetch: query.refetch,
-  }
-}
+  };
+};
 
 /** Poll intervals per data domain, in ms. Centralised so cadence is tunable. */
 export const POLL_INTERVALS = {
   stations: 3000,
   station: 3000,
   dashboard: 5000,
-} as const
+} as const;

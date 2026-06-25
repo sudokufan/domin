@@ -1,15 +1,15 @@
-import type { TimeRange } from '@/api/types'
-import { clsx } from 'clsx'
+import type { TimeRange } from "@/api/types";
+import { clsx } from "clsx";
 
-const RANGES: TimeRange[] = ['1h', '4h', '24h']
+const RANGES: TimeRange[] = ["1h", "4h", "24h"];
 
 /** Segmented control for the dashboard time range. */
 export const TimeRangeToggle = ({
   value,
   onChange,
 }: {
-  value: TimeRange
-  onChange: (range: TimeRange) => void
+  value: TimeRange;
+  onChange: (range: TimeRange) => void;
 }) => (
   <div
     role="group"
@@ -23,14 +23,14 @@ export const TimeRangeToggle = ({
         aria-pressed={value === range}
         onClick={() => onChange(range)}
         className={clsx(
-          'rounded-md px-3 py-1 text-xs font-medium transition-colors',
+          "rounded-md px-3 py-1 text-xs font-medium transition-colors",
           value === range
-            ? 'bg-slate-900 text-white'
-            : 'text-slate-500 hover:text-slate-800',
+            ? "bg-slate-900 text-white"
+            : "text-slate-500 hover:text-slate-800",
         )}
       >
         {range}
       </button>
     ))}
   </div>
-)
+);

@@ -1,18 +1,18 @@
-import { ChevronDown, ChevronRight } from 'lucide-react'
-import type { Station } from '@/api/types'
-import { clsx } from 'clsx'
-import { formatDuration } from '@/lib/format'
-import { StatusBadge } from './StatusBadge'
-import { UtilisationBar } from './UtilisationBar'
-import { StationDetail } from './StationDetail'
-import { Skeleton } from './states'
+import { ChevronDown, ChevronRight } from "lucide-react";
+import type { Station } from "@/api/types";
+import { clsx } from "clsx";
+import { formatDuration } from "@/lib/format";
+import { StatusBadge } from "./StatusBadge";
+import { UtilisationBar } from "./UtilisationBar";
+import { StationDetail } from "./StationDetail";
+import { Skeleton } from "./states";
 
-export type StationSortKey = 'id' | 'name' | 'time' | 'utilisation'
-export type SortDirection = 'asc' | 'desc'
+export type StationSortKey = "id" | "name" | "time" | "utilisation";
+export type SortDirection = "asc" | "desc";
 
 export interface StationSort {
-  key: StationSortKey
-  direction: SortDirection
+  key: StationSortKey;
+  direction: SortDirection;
 }
 
 const SortableHeader = ({
@@ -22,31 +22,31 @@ const SortableHeader = ({
   onSort,
   className,
 }: {
-  label: string
-  sortKey: StationSortKey
-  sort: StationSort
-  onSort: (key: StationSortKey) => void
-  className?: string
+  label: string;
+  sortKey: StationSortKey;
+  sort: StationSort;
+  onSort: (key: StationSortKey) => void;
+  className?: string;
 }) => {
-  const isActive = sort.key === sortKey
+  const isActive = sort.key === sortKey;
   return (
-    <th className={clsx('px-3 py-2.5 font-semibold', className)}>
+    <th className={clsx("px-3 py-2.5 font-semibold", className)}>
       <button
         type="button"
         onClick={() => onSort(sortKey)}
         className={clsx(
-          'inline-flex items-center gap-1 uppercase hover:text-slate-600',
-          isActive && 'text-slate-700',
+          "inline-flex items-center gap-1 uppercase hover:text-slate-600",
+          isActive && "text-slate-700",
         )}
       >
         {label}
-        <span className={clsx('text-[9px]', !isActive && 'opacity-0')}>
-          {sort.direction === 'asc' ? '▲' : '▼'}
+        <span className={clsx("text-[9px]", !isActive && "opacity-0")}>
+          {sort.direction === "asc" ? "▲" : "▼"}
         </span>
       </button>
     </th>
-  )
-}
+  );
+};
 
 const StationRow = ({
   station,
@@ -54,17 +54,17 @@ const StationRow = ({
   isExpanded,
   onToggle,
 }: {
-  station: Station
-  now: number
-  isExpanded: boolean
-  onToggle: () => void
+  station: Station;
+  now: number;
+  isExpanded: boolean;
+  onToggle: () => void;
 }) => (
   <>
     <tr
       onClick={onToggle}
       className={clsx(
-        'cursor-pointer transition-colors hover:bg-slate-50',
-        isExpanded && 'bg-slate-50',
+        "cursor-pointer transition-colors hover:bg-slate-50",
+        isExpanded && "bg-slate-50",
       )}
     >
       <td className="py-3 pl-4 font-medium text-slate-800 sm:pl-5">
@@ -104,7 +104,7 @@ const StationRow = ({
       </tr>
     )}
   </>
-)
+);
 
 /**
  * Sortable, expandable stations table. Lower-priority columns (Stage, Type,
@@ -120,22 +120,37 @@ export const StationsTable = ({
   isLoading,
   now,
 }: {
-  stations: Station[]
-  sort: StationSort
-  onSort: (key: StationSortKey) => void
-  expandedId: string | null
-  onToggleExpand: (id: string) => void
-  isLoading: boolean
-  now: number
+  stations: Station[];
+  sort: StationSort;
+  onSort: (key: StationSortKey) => void;
+  expandedId: string | null;
+  onToggleExpand: (id: string) => void;
+  isLoading: boolean;
+  now: number;
 }) => (
   <div className="overflow-x-auto">
     <table className="w-full min-w-[480px] text-sm">
       <thead>
         <tr className="border-b border-slate-200 text-left text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
-          <SortableHeader label="ID" sortKey="id" sort={sort} onSort={onSort} className="w-20 pl-4 sm:pl-5" />
-          <SortableHeader label="Name" sortKey="name" sort={sort} onSort={onSort} />
-          <th className="hidden px-3 py-2.5 font-semibold md:table-cell">Stage</th>
-          <th className="hidden px-3 py-2.5 font-semibold lg:table-cell">Type</th>
+          <SortableHeader
+            label="ID"
+            sortKey="id"
+            sort={sort}
+            onSort={onSort}
+            className="w-20 pl-4 sm:pl-5"
+          />
+          <SortableHeader
+            label="Name"
+            sortKey="name"
+            sort={sort}
+            onSort={onSort}
+          />
+          <th className="hidden px-3 py-2.5 font-semibold md:table-cell">
+            Stage
+          </th>
+          <th className="hidden px-3 py-2.5 font-semibold lg:table-cell">
+            Type
+          </th>
           <th className="px-3 py-2.5 font-semibold">Status</th>
           <SortableHeader
             label="Time in state"
@@ -165,7 +180,10 @@ export const StationsTable = ({
           ))
         ) : stations.length === 0 ? (
           <tr>
-            <td colSpan={8} className="px-5 py-12 text-center text-sm text-slate-400">
+            <td
+              colSpan={8}
+              className="px-5 py-12 text-center text-sm text-slate-400"
+            >
               No stations match your filters.
             </td>
           </tr>
@@ -183,4 +201,4 @@ export const StationsTable = ({
       </tbody>
     </table>
   </div>
-)
+);

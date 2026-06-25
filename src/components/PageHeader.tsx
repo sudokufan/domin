@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 /**
  * Section header used at the top of each page: an optional uppercase eyebrow
@@ -11,10 +11,10 @@ export const PageHeader = ({
   subtitle,
   actions,
 }: {
-  eyebrow?: ReactNode
-  title: string
-  subtitle?: ReactNode
-  actions?: ReactNode
+  eyebrow?: ReactNode;
+  title: string;
+  subtitle?: ReactNode;
+  actions?: ReactNode;
 }) => (
   <div className="mb-5">
     {eyebrow && (
@@ -30,4 +30,4 @@ export const PageHeader = ({
       {actions}
     </div>
   </div>
-)
+);

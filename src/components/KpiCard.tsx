@@ -1,12 +1,12 @@
-import type { ReactNode } from 'react'
-import { TrendingDown, TrendingUp } from 'lucide-react'
-import { Card } from './Card'
-import { clsx } from 'clsx'
+import type { ReactNode } from "react";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { Card } from "./Card";
+import { clsx } from "clsx";
 
 export interface KpiDelta {
   /** Percentage-point (or unit) change; sign drives the arrow + colour. */
-  value: number
-  unit?: string
+  value: number;
+  unit?: string;
 }
 
 /**
@@ -21,15 +21,15 @@ export const KpiCard = ({
   children,
   accent,
 }: {
-  label: string
-  value: ReactNode
-  delta?: KpiDelta
-  footer?: ReactNode
-  children?: ReactNode
+  label: string;
+  value: ReactNode;
+  delta?: KpiDelta;
+  footer?: ReactNode;
+  children?: ReactNode;
   /** Optional colour for the value, e.g. red for active faults. */
-  accent?: string
+  accent?: string;
 }) => {
-  const isPositive = delta != null && delta.value >= 0
+  const isPositive = delta != null && delta.value >= 0;
   return (
     <Card className="flex flex-col p-4">
       <p className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
@@ -45,8 +45,8 @@ export const KpiCard = ({
         {delta != null && (
           <span
             className={clsx(
-              'flex items-center gap-0.5 text-xs font-medium',
-              isPositive ? 'text-emerald-600' : 'text-red-600',
+              "flex items-center gap-0.5 text-xs font-medium",
+              isPositive ? "text-emerald-600" : "text-red-600",
             )}
           >
             {isPositive ? (
@@ -55,12 +55,12 @@ export const KpiCard = ({
               <TrendingDown className="h-3.5 w-3.5" />
             )}
             {Math.abs(delta.value)}
-            {delta.unit ?? ''}
+            {delta.unit ?? ""}
           </span>
         )}
       </div>
       {footer && <p className="mt-1 text-xs text-slate-500">{footer}</p>}
       {children && <div className="mt-2 flex-1">{children}</div>}
     </Card>
-  )
-}
+  );
+};

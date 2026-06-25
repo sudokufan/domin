@@ -1,23 +1,29 @@
-import { useState } from 'react'
-import { useStations } from '@/hooks/useStations'
-import { useNow } from '@/hooks/useNow'
-import { PageHeader } from '@/components/PageHeader'
-import { ProcessFlow } from '@/components/ProcessFlow'
-import { StationInspectorPanel } from '@/components/StationInspectorPanel'
-import { StatusLegend } from '@/components/StatusLegend'
-import { Card } from '@/components/Card'
-import { ErrorState, Skeleton } from '@/components/states'
-import { formatRelative } from '@/lib/format'
+import { useState } from "react";
+import { useStations } from "@/hooks/useStations";
+import { useNow } from "@/hooks/useNow";
+import { PageHeader } from "@/components/PageHeader";
+import { ProcessFlow } from "@/components/ProcessFlow";
+import { StationInspectorPanel } from "@/components/StationInspectorPanel";
+import { StatusLegend } from "@/components/StatusLegend";
+import { Card } from "@/components/Card";
+import { ErrorState, Skeleton } from "@/components/states";
+import { formatRelative } from "@/lib/format";
 
 export const FloorMapPage = () => {
-  const { data: stations, isLoading, error, refetch, lastUpdated } = useStations()
-  const now = useNow()
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const {
+    data: stations,
+    isLoading,
+    error,
+    refetch,
+    lastUpdated,
+  } = useStations();
+  const now = useNow();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const stationList = stations ?? []
+  const stationList = stations ?? [];
 
   const handleSelect = (id: string) =>
-    setSelectedId((current) => (current === id ? null : id))
+    setSelectedId((current) => (current === id ? null : id));
 
   return (
     <div className="px-4 py-5 sm:px-6">
@@ -44,7 +50,10 @@ export const FloorMapPage = () => {
               {isLoading && stationList.length === 0 ? (
                 <div className="flex flex-col gap-3 lg:flex-row">
                   {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton key={index} className="h-28 w-full rounded-md lg:flex-1" />
+                    <Skeleton
+                      key={index}
+                      className="h-28 w-full rounded-md lg:flex-1"
+                    />
                   ))}
                 </div>
               ) : (
@@ -60,7 +69,7 @@ export const FloorMapPage = () => {
           <div className="flex items-center justify-between border-t border-slate-100 px-4 py-2 text-[11px] text-slate-400">
             <span>{stationList.length} stations · Bay 36 m × 14 m</span>
             <span>
-              Last sync {lastUpdated ? formatRelative(lastUpdated, now) : '—'}
+              Last sync {lastUpdated ? formatRelative(lastUpdated, now) : "—"}
             </span>
           </div>
         </Card>
@@ -73,5 +82,5 @@ export const FloorMapPage = () => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
