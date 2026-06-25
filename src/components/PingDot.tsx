@@ -5,7 +5,7 @@ import { clsx } from "clsx";
  * it. Used for the sidebar/topbar live markers and for running stations.
  *
  * Colours are Tailwind background-class strings (e.g. 'bg-emerald-500' or a
- * status token like 'bg-status-running'). `pingColor` defaults to `color`, but
+ * status colour like 'bg-green-500'). `pingColor` defaults to `color`, but
  * can differ for a two-tone effect.
  */
 export const PingDot = ({
