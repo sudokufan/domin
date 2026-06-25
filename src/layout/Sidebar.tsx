@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink } from "react-router-dom";
 import {
   AlertTriangle,
   ClipboardList,
@@ -10,44 +10,45 @@ import {
   FileText,
   Settings,
   type LucideIcon,
-} from 'lucide-react'
-import { cn } from '@/lib/cn'
+} from "lucide-react";
+import { cn } from "@/lib/cn";
+import { PingDot } from "@/components/PingDot";
 
 interface NavItem {
-  to: string
-  label: string
-  icon: LucideIcon
-  badge?: number
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: number;
 }
 
 interface NavSection {
-  heading: string
-  items: NavItem[]
+  heading: string;
+  items: NavItem[];
 }
 
 const SECTIONS: NavSection[] = [
   {
-    heading: 'Factory status',
+    heading: "Factory status",
     items: [
-      { to: '/stations', label: 'Stations', icon: ListChecks },
-      { to: '/floor-map', label: 'Floor map', icon: Map },
-      { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { to: "/stations", label: "Stations", icon: ListChecks },
+      { to: "/floor-map", label: "Floor map", icon: Map },
+      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     ],
   },
   {
-    heading: 'Production',
+    heading: "Production",
     items: [
-      { to: '/jobs', label: 'Jobs', icon: ClipboardList },
-      { to: '/valves', label: 'Valves', icon: Package },
-      { to: '/reports', label: 'Reports', icon: FileText },
-      { to: '/alerts', label: 'Alerts', icon: AlertTriangle, badge: 1 },
+      { to: "/jobs", label: "Jobs", icon: ClipboardList },
+      { to: "/valves", label: "Valves", icon: Package },
+      { to: "/reports", label: "Reports", icon: FileText },
+      { to: "/alerts", label: "Alerts", icon: AlertTriangle, badge: 1 },
     ],
   },
   {
-    heading: 'Account',
-    items: [{ to: '/settings', label: 'Settings', icon: Settings }],
+    heading: "Account",
+    items: [{ to: "/settings", label: "Settings", icon: Settings }],
   },
-]
+];
 
 /**
  * Primary navigation. A static rail from `lg` up; below that it becomes an
@@ -58,14 +59,14 @@ export const Sidebar = ({
   isOpen,
   onClose,
 }: {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }) => (
   <>
     <div
       className={cn(
-        'fixed inset-0 z-30 bg-slate-900/50 lg:hidden',
-        isOpen ? 'block' : 'hidden',
+        "fixed inset-0 z-30 bg-slate-900/50 lg:hidden",
+        isOpen ? "block" : "hidden",
       )}
       onClick={onClose}
       aria-hidden
@@ -73,8 +74,8 @@ export const Sidebar = ({
 
     <aside
       className={cn(
-        'fixed inset-y-0 left-0 z-40 flex h-full w-60 shrink-0 flex-col bg-sidebar text-slate-300 transition-transform duration-200 lg:static lg:translate-x-0',
-        isOpen ? 'translate-x-0' : '-translate-x-full',
+        "fixed inset-y-0 left-0 z-40 flex h-full w-60 shrink-0 flex-col bg-sidebar text-slate-300 transition-transform duration-200 lg:static lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full",
       )}
     >
       {/* Brand */}
@@ -90,10 +91,7 @@ export const Sidebar = ({
         <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-sidebar-muted uppercase">
           <span>Factory Status</span>
           <span className="flex items-center gap-1 text-emerald-400">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
+            <PingDot size="h-1.5 w-1.5" color="bg-emerald-400" />
             Live
           </span>
         </div>
@@ -114,10 +112,10 @@ export const Sidebar = ({
                     onClick={onClose}
                     className={({ isActive }) =>
                       cn(
-                        'group flex items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
+                        "group flex items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
                         isActive
-                          ? 'bg-emerald-500/10 text-emerald-300'
-                          : 'text-slate-400 hover:bg-white/5 hover:text-slate-100',
+                          ? "bg-emerald-500/10 text-emerald-300"
+                          : "text-slate-400 hover:bg-white/5 hover:text-slate-100",
                       )
                     }
                   >
@@ -125,10 +123,10 @@ export const Sidebar = ({
                       <>
                         <item.icon
                           className={cn(
-                            'h-[18px] w-[18px] shrink-0',
+                            "h-[18px] w-[18px] shrink-0",
                             isActive
-                              ? 'text-emerald-400'
-                              : 'text-slate-500 group-hover:text-slate-300',
+                              ? "text-emerald-400"
+                              : "text-slate-500 group-hover:text-slate-300",
                           )}
                         />
                         <span className="flex-1">{item.label}</span>
@@ -153,7 +151,9 @@ export const Sidebar = ({
           JM
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-white">James Marsden</p>
+          <p className="truncate text-sm font-medium text-white">
+            James Marsden
+          </p>
           <p className="truncate text-xs text-slate-500">Operations</p>
         </div>
         <button
@@ -166,4 +166,4 @@ export const Sidebar = ({
       </div>
     </aside>
   </>
-)
+);

@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { Bell, ChevronRight, Menu } from 'lucide-react'
 import { useNow } from '@/hooks/useNow'
+import { PingDot } from '@/components/PingDot'
 import { formatClock, formatShortDate } from '@/lib/format'
 import { routeLabel } from './routeMeta'
 
@@ -35,10 +36,7 @@ export const Topbar = ({ onMenuClick }: { onMenuClick: () => void }) => {
       {/* Live clock + notifications */}
       <div className="flex items-center gap-2 sm:gap-4">
         <div className="flex items-center gap-2 rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 sm:px-3">
-          <span className="relative flex h-2 w-2" title="Live data">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
+          <PingDot color="bg-emerald-500" pingColor="bg-emerald-400" title="Live data" />
           <span className="hidden text-slate-700 sm:inline">Live</span>
           <span className="hidden text-slate-300 sm:inline">·</span>
           <span className="tabular-nums">{formatClock(now)}</span>

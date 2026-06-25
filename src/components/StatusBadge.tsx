@@ -1,6 +1,7 @@
 import type { StationStatus } from '@/api/types'
 import { cn } from '@/lib/cn'
 import { statusStyle } from '@/lib/status'
+import { PingDot } from './PingDot'
 
 export const StatusDot = ({
   status,
@@ -13,12 +14,7 @@ export const StatusDot = ({
 }) => {
   const style = statusStyle(status)
   if (ping && status === 'running') {
-    return (
-      <span className={cn('relative flex h-2 w-2', className)}>
-        <span className={cn('absolute inline-flex h-full w-full animate-ping rounded-full opacity-75', style.dot)} />
-        <span className={cn('relative inline-flex h-2 w-2 rounded-full', style.dot)} />
-      </span>
-    )
+    return <PingDot color={style.dot} className={className} />
   }
   return <span className={cn('inline-block h-2 w-2 rounded-full', style.dot, className)} />
 }
