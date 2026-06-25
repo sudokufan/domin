@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { STATION_STATUSES } from "@/api/types";
-import { useStations } from "@/hooks/useStations";
+import { useGetStations } from "@/hooks/useGetStations";
 import { useNow } from "@/hooks/useNow";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusSummary } from "@/components/StatusSummary";
@@ -16,7 +16,7 @@ import { statusStyle } from "@/lib/status";
 import { exportStationsCsv } from "@/lib/exportCsv";
 
 export const StationsPage = () => {
-  const { data, isLoading, error, refetch } = useStations();
+  const { data, isLoading, error, refetch } = useGetStations();
   const now = useNow();
 
   const [query, setQuery] = useState("");

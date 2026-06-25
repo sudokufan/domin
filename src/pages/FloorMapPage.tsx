@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useStations } from "@/hooks/useStations";
+import { useGetStations } from "@/hooks/useGetStations";
 import { useNow } from "@/hooks/useNow";
 import { PageHeader } from "@/components/PageHeader";
 import { ProcessFlow } from "@/components/ProcessFlow";
@@ -16,7 +16,7 @@ export const FloorMapPage = () => {
     error,
     refetch,
     lastUpdated,
-  } = useStations();
+  } = useGetStations();
   const now = useNow();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 

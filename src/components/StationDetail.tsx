@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
-import { useStation, useStationEvents } from "@/hooks/useStation";
+import { useGetStation, useGetStationEvents } from "@/hooks/useGetStation";
 import { useNow } from "@/hooks/useNow";
 import { statusStyle } from "@/lib/status";
 import { formatDuration, formatRelative } from "@/lib/format";
@@ -47,8 +47,8 @@ export const StationDetail = ({
   stationId: string;
   onClose?: () => void;
 }) => {
-  const { data: station, isLoading } = useStation(stationId);
-  const { data: events } = useStationEvents(stationId);
+  const { data: station, isLoading } = useGetStation(stationId);
+  const { data: events } = useGetStationEvents(stationId);
   const now = useNow();
 
   if (isLoading || !station) {

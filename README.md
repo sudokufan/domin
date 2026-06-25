@@ -39,21 +39,17 @@ The structure follows the reference diagram in `src/designs/diagram.png`:
 
 ```
 src/
-  api/          REST contract + the swappable data source
+  api/          the data contract + the static source behind it
     types.ts        domain types (Station, Telemetry union, events, dashboard)
-    client.ts       the ONE coupling point — mock vs real API
-    endpoints.ts    typed wrappers: getStations(), getDashboard(range), …
-    mock/           in-browser stand-in for the PostgreSQL + REST backend
-      seed.ts         the six machines + initial state
-      mockData.ts     static dataset: 6 machines, 24h history, aggregates
-      handlers.ts     resolves request paths against the mock data
-  hooks/        usePolling primitive + useStations / useStation / useDashboard
-  layout/       AppLayout, Sidebar (drawer on mobile), Topbar
+    mockData.ts     static dataset: 6 machines, 24h history, dashboard aggregates
+    endpoints.ts    the `api`: async getStations() / getStation() / getDashboard()…
+  hooks/        usePolling primitive + useGetStations / useGetStation / useGetDashboard
+  layout/       Layout, Sidebar (drawer on mobile), Topbar
   components/   reusable UI — composed into pages:
                   Stations  → StatusSummary, StationFilters, StationsTable
                   Floor map → ProcessFlow, FlowConnector, StationCard,
                               StationInspectorPanel
-                  Dashboard → DashboardKpis, UtilisationChart, StatusTimeline
+                  Dashboard → KpiCardContainer, UtilisationChart, StatusTimeline
                   shared    → StatusBadge, Card, KpiCard, Sparkline, states, …
   pages/        StationsPage, FloorMapPage, DashboardPage, StubPage
   lib/          status palette, formatting, CSV export, telemetry presentation
@@ -62,20 +58,20 @@ src/
 Pages stay thin: they own state (filters, selection, range) and compose
 components; the components are presentational and reusable.
 
-**Data flows one way:** `pages → hooks → endpoints → client → (mock | real API)`.
-Components never construct request paths or touch the mock; they only
-depend on the types in `api/types.ts`.
+**Data flows one way:** `pages → hooks → endpoints → mockData`.
+Components never touch the data source; they only depend on the types in
+`api/types.ts`.
 
 ### Swapping the mock for a real API
 
-`src/api/client.ts` is the only place that knows where data comes from. Set
-`VITE_API_BASE_URL` and every request goes to the real REST API over `fetch()`
-instead of the mock — no other code changes. The `mock/` folder can then
-be deleted.
+`src/api/endpoints.ts` is the only place that knows where data comes from — a
+handful of `async` functions that today resolve from `mockData`. Change their
+bodies to `fetch()` the real endpoints and the rest of the app is unchanged;
+`mockData.ts` can then be deleted.
 
 ## Key decisions & trade-offs
 
-- **Static in-browser mock behind the API boundary.** `src/api/mock/mockData.ts`
+- **Static in-browser mock behind the API boundary.** `src/api/mockData.ts`
   builds one believable snapshot at load — the 6 machines plus ~24h of
   synthesised history — anchored to a single frozen timestamp, then never
   changes. Reads are deterministic, so repeated polls return identical data and
@@ -93,7 +89,7 @@ be deleted.
   background refetch and request de-duplication for free. `hooks/usePolling.ts`
   wraps it with a fixed refetch interval and "keep last data while refetching"
   so polling behaviour (and the diagram's `usePolling` node) lives in one place;
-  `useStations` / `useDashboard` compose it.
+  `useGetStations` / `useGetDashboard` compose it.
 
 - **Single source of truth for status styling.** `lib/status.ts` maps each
   status to colours/labels once; badges, dots, the timeline and charts all read
@@ -127,8 +123,8 @@ icon-only buttons and the progress bars, and status conveyed by **text + colour*
 ## If I took it further
 
 - Code-split Recharts (it dominates the bundle) and lazy-load routes.
-- WebSocket/SSE transport for true push instead of polling (the `client.ts` seam
-  makes this a localised change).
+- WebSocket/SSE transport for true push instead of polling (the `endpoints.ts`
+  seam makes this a localised change).
 - Tests: unit-test the aggregation logic in `mockData.ts` and the formatting
   helpers; component tests for the table filtering/sorting.
 - Persist filter/range state in the URL so views are shareable.

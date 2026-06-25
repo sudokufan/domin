@@ -1,27 +1,26 @@
-import { apiGet } from "./client";
-import type {
-  DashboardData,
-  Station,
-  StationHistory,
-  StatusEvent,
-  TimeRange,
-} from "./types";
+import type { DashboardData, Station, StatusEvent, TimeRange } from "./types";
+import * as mockData from "./mockData";
 
 /**
- * Typed wrappers around the REST endpoints. Hooks call these; nothing else in
- * the app constructs request paths.
+ * The app's API surface — the functions the React Query hooks call.
+ *
+ * They're `async` so they look and behave like network calls (React Query
+ * awaits them), but today they resolve straight from the static mock dataset.
+ * To go live, swap each body for a `fetch()` to the real endpoint — nothing
+ * else in the app changes.
  */
 export const api = {
-  getStations: () => apiGet<Station[]>("/stations"),
+  getStations: async (): Promise<Station[]> => mockData.getStations(),
 
-  getStation: (id: string) => apiGet<Station>(`/stations/${id}`),
+  getStation: async (id: string): Promise<Station> => {
+    const station = mockData.getStation(id);
+    if (!station) throw new Error(`Station ${id} not found`);
+    return station;
+  },
 
-  getStationEvents: (id: string) =>
-    apiGet<StatusEvent[]>(`/stations/${id}/events`),
+  getStationEvents: async (id: string): Promise<StatusEvent[]> =>
+    mockData.getStationEvents(id),
 
-  getStationHistory: (id: string, range: TimeRange) =>
-    apiGet<StationHistory>(`/stations/${id}/history`, { range }),
-
-  getDashboard: (range: TimeRange) =>
-    apiGet<DashboardData>("/dashboard", { range }),
+  getDashboard: async (range: TimeRange): Promise<DashboardData> =>
+    mockData.getDashboard(range),
 };

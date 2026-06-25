@@ -11,7 +11,7 @@ import {
  * It wraps React Query with a fixed refetch interval and the options that
  * suit a live-monitoring UI: keep the previous data visible while the next
  * poll is in flight (no flicker), and surface when the data last updated.
- * All domain hooks (useStations, useDashboard, …) are built on top of this so
+ * All domain hooks (useGetStations, useGetDashboard, …) are built on top of this so
  * polling behaviour is defined in exactly one place.
  */
 export interface PollingResult<Data> {

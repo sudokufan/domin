@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { TimeRange } from "@/api/types";
-import { useDashboard } from "@/hooks/useDashboard";
-import { useStations } from "@/hooks/useStations";
+import { useGetDashboard } from "@/hooks/useGetDashboard";
+import { useGetStations } from "@/hooks/useGetStations";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardHeader } from "@/components/Card";
 import { KpiCardContainer } from "@/components/KpiCardContainer";
@@ -43,8 +43,8 @@ const DashboardSkeleton = () => (
 
 export const DashboardPage = () => {
   const [range, setRange] = useState<TimeRange>("24h");
-  const { data, error, refetch } = useDashboard(range);
-  const { data: stations } = useStations();
+  const { data, error, refetch } = useGetDashboard(range);
+  const { data: stations } = useGetStations();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   return (
