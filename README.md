@@ -8,10 +8,6 @@ and fault history over time.
 Built with React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query and
 Recharts.
 
-> **New to the codebase?** Read **[WALKTHROUGH.md](./WALKTHROUGH.md)** — a
-> guided, file-by-file tour that follows a piece of data from the mock store all
-> the way to the screen.
-
 ## Running it
 
 ```bash
@@ -27,15 +23,15 @@ line.
 
 ## The three views
 
-| View | What it answers |
-| --- | --- |
-| **Stations** | Status of every machine at a glance — searchable, filterable, sortable table with 24h utilisation; expand a row for telemetry, parts and events. |
-| **Floor map** | Where things physically are. A shop-floor plan with status-coloured machine cards; select one for a detail panel. |
+| View          | What it answers                                                                                                                                                                         |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Stations**  | Status of every machine at a glance — searchable, filterable, sortable table with 24h utilisation; expand a row for telemetry, parts and events.                                        |
+| **Floor map** | Where things physically are. A shop-floor plan with status-coloured machine cards; select one for a detail panel.                                                                       |
 | **Dashboard** | Is the line healthy? Headline KPIs (utilisation, stations running, active faults, throughput vs target), a utilisation trend with a target line, and a 24h per-machine status timeline. |
 
 ## Architecture
 
-The structure follows the reference diagram in `src/designs/diagram.png`:
+The structure follows the reference diagram in `public/assets/diagram.png`:
 
 ```
 src/
@@ -85,7 +81,7 @@ instead. The hooks, pages and components don't change at all; once live,
 > shell), exposed on `import.meta.env`. There's no `.env` by default, so the app
 > uses the mock; copy `.env.example` → `.env` and set the URL to go live.
 
-## Key decisions & trade-offs
+## Approaches
 
 - **Static in-browser mock behind the API boundary.** `src/api/mockData.ts`
   builds one believable snapshot at load — the 6 machines plus ~24h of
@@ -93,8 +89,7 @@ instead. The hooks, pages and components don't change at all; once live,
   changes. Reads are deterministic, so repeated polls return identical data and
   the UI renders once and stays put. It lives entirely behind the API boundary,
   so the front-end depends only on the data contract (`api/types.ts`), never on
-  the mock. (An earlier version was a live ticking simulation; that was removed
-  in favour of stable data.)
+  the mock.
 
 - **Machine-specific telemetry as a discriminated union.** Telemetry volume
   varies wildly per station (the honing machine reports state only; the test rig
@@ -105,7 +100,7 @@ instead. The hooks, pages and components don't change at all; once live,
   background refetch and request de-duplication for free. `hooks/usePolling.ts`
   wraps it with a fixed refetch interval and "keep last data while refetching"
   so polling behaviour (and the diagram's `usePolling` node) lives in one place;
-  `useGetStations` / `useGetDashboard` compose it.
+  `useGetStations` / `useGetDashboard` composes it.
 
 - **Single source of truth for status styling.** `lib/status.ts` maps each
   status to colours/labels once; badges, dots, the timeline and charts all read
@@ -135,14 +130,3 @@ instead. The hooks, pages and components don't change at all; once live,
 Semantic table markup, keyboard-operable rows/cards/controls, ARIA labels on
 icon-only buttons and the progress bars, and status conveyed by **text + colour**
 (never colour alone).
-
-## If I took it further
-
-- Code-split Recharts (it dominates the bundle) and lazy-load routes.
-- WebSocket/SSE transport for true push instead of polling (the `endpoints.ts`
-  seam makes this a localised change).
-- Tests: unit-test the aggregation logic in `mockData.ts` and the formatting
-  helpers; component tests for the table filtering/sorting.
-- Persist filter/range state in the URL so views are shareable.
-- Build out the Production/Account areas currently stubbed in the nav.
-```
