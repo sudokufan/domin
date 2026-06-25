@@ -6,7 +6,7 @@ and whether the line is hitting its throughput targets — plus utilisation tren
 and fault history over time.
 
 Built with React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query and
-Recharts.
+Recharts. Claude Code was used to form the initial solution building on a boilerplate Vite scaffold, which was then refined by me.
 
 ## Running it
 
